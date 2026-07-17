@@ -42,7 +42,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes popin{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:scale(1)}}
 @keyframes tb{0%,100%{transform:translateY(0);opacity:.5}40%{transform:translateY(-4px);opacity:1}}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.15s!important}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.15s!important}}
 /* ============================================================
    APP SHELL
    ============================================================ */
@@ -167,7 +167,6 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .todo.doing .tbox{border-color:var(--dc,var(--accent));border-style:dashed}
 .todo p{flex:1;color:var(--ink)}
 .todo.done p{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--ink-4)}
-.todo .who{font-family:var(--mono);font-size:9.5px;color:var(--ink-3);flex:none}
 .todo .ava{width:22px;height:22px;border-radius:50%;overflow:hidden;flex:none}
 /* file / decision cards */
 .fcard{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--line);
@@ -282,7 +281,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   .sidebar{width:100%;flex-direction:row;align-items:center;padding:8px 12px;border-right:none;
     border-bottom:1px solid var(--line);overflow-x:auto}
   .brand{border-bottom:none;padding:0 10px 0 0;flex:none}
-  .brand span{display:none}
+  .brand div span{display:none}
   .nav{flex-direction:row;margin-top:0;gap:4px}
   .nav-lbl,.nav-item .nk,.side-foot{display:none}
   .nav-item{padding:7px 11px;white-space:nowrap}
@@ -321,7 +320,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <div class="views" id="viewsBox">
 
   <!-- ================= 总览 ================= -->
-  <section class="view act animate" id="v-home">
+  <section class="view act" id="v-home">
     <div class="kpis rv d1">
       <div class="kpi"><span class="k-lbl">本周回款</span><b>¥<i data-count="86000" data-fmt="1">0</i></b><span class="k-delta up">▲ 32% · 环比上周</span></div>
       <div class="kpi"><span class="k-lbl">今日完成任务</span><b><i data-count="12">0</i> 项</b><span class="k-delta up">▲ 3 · 较昨日</span></div>
@@ -345,21 +344,21 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
           <path class="tr-line" d="M6,86 C28,80 36,76 50,71 C70,64 78,61 94,55 C114,47 122,45 136,40 C158,31 170,27 186,23 C198,20 206,18 214,16"/>
           <circle class="tr-dot" cx="214" cy="16" r="4" fill="#10b981"/>
         </svg>
-        <div class="tr-foot"><b>+131 条</b><span>本周累计 · 今日 +23 · 总库 259 条</span></div>
+        <div class="tr-foot"><b>+131 条</b><span>近 7 天 · 今日 +23 · 总库 259 条</span></div>
       </div>
       <div class="panel rv d4">
         <h5>今晚亮点</h5>
-        <div class="fd-item"><i class="dot" style="background:var(--mkt)"></i><span><b>市场销售</b> —— 星辰机械回款 ¥50,000，两场试点确认</span><span class="when">18:20</span></div>
-        <div class="fd-item"><i class="dot" style="background:var(--prod)"></i><span><b>产品</b> —— 新版产品介绍定稿，已入共享区</span><span class="when">16:02</span></div>
+        <div class="fd-item"><i class="dot" style="background:var(--mkt)"></i><span><b>市场销售</b> —— 星辰机械 ¥50,000 回款到账确认，两场试点锁定</span><span class="when">18:20</span></div>
         <div class="fd-item"><i class="dot" style="background:var(--dev)"></i><span><b>研发</b> —— 接口联调完成，新版本进入测试</span><span class="when">15:47</span></div>
         <div class="fd-item"><i class="dot" style="background:var(--ad)"></i><span><b>广告营销</b> —— 两条视频发布，获客素材已归档</span><span class="when">14:31</span></div>
+        <div class="fd-item"><i class="dot" style="background:var(--prod)"></i><span><b>产品</b> —— 新版产品介绍定稿，已入共享区</span><span class="when">10:24</span></div>
       </div>
     </div>
     <div class="grid g3">
       <div class="panel rv d4">
-        <h5>跨部门协作 · 今日 3 件全部闭环</h5>
+        <h5>跨部门协作 · 今日 3 件闭环 · 1 件新建</h5>
         <div class="ok-item"><span class="okc"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.5 5 9 9.5 3.5" stroke="#047857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>研发 → 产品：接口文档 v3，秒级取件</div>
-        <div class="ok-item"><span class="okc"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.5 5 9 9.5 3.5" stroke="#047857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>市场 → 产品：新版产品介绍 PPT，共享区直取</div>
+        <div class="ok-item"><span class="okc"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.5 5 9 9.5 3.5" stroke="#047857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>产品 → 市场：新版产品介绍 PPT，共享区直取</div>
         <div class="ok-item"><span class="okc"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.5 5 9 9.5 3.5" stroke="#047857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>营销 → 市场：试点城市获客素材包</div>
       </div>
       <div class="attn-card rv d5">
@@ -369,7 +368,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       </div>
       <div class="panel rv d6">
         <h5>本周里程碑</h5>
-        <div class="fd-item"><i class="dot" style="background:var(--mkt)"></i><span>两场试点城市档期确认（阿妍）</span><span class="when">周五</span></div>
+        <div class="fd-item"><i class="dot" style="background:var(--mkt)"></i><span>两场试点城市档期确认（阿妍，提前完成）</span><span class="when">周四</span></div>
         <div class="fd-item"><i class="dot" style="background:var(--dev)"></i><span>v2.4 进入测试，预计下周三发布</span><span class="when">周四</span></div>
         <div class="fd-item"><i class="dot" style="background:var(--prod)"></i><span>新版产品介绍 v3 定稿</span><span class="when">周四</span></div>
       </div>
@@ -412,9 +411,9 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     </div>
     <div class="grid g2">
       <div class="panel rv d5">
-        <h5>今日沉淀</h5>
-        <div class="fcard" style="--fc:var(--dev-weak)"><span class="fico"><span data-icon="doc" data-c="#5b86d6"></span></span><div><b>接口文档 v3.pdf</b><span>阿哲 · 15:47 · 部门共享</span></div><span class="tag ok">共享区</span></div>
-        <div class="fcard" style="--fc:var(--dev-weak)"><span class="fico"><span data-icon="spark" data-c="#5b86d6"></span></span><div><b>决策：方案 B 定稿（评审会）</b><span>大凯 · 10:02 · 含否决 A 方案的理由</span></div><span class="tag ok">已归档</span></div>
+        <h5>最近沉淀</h5>
+        <div class="fcard" style="--fc:var(--dev-weak)"><span class="fico"><span data-icon="doc" data-c="#5b86d6"></span></span><div><b>接口文档 v3.pdf</b><span>阿哲 · 今天 15:47 · 全公司共享</span></div><span class="tag ok">共享区</span></div>
+        <div class="fcard" style="--fc:var(--dev-weak)"><span class="fico"><span data-icon="spark" data-c="#5b86d6"></span></span><div><b>决策：方案 B 定稿（评审会）</b><span>大凯 · 07-10 归档 · 含否决 A 方案的理由</span></div><span class="tag ok">已归档</span></div>
         <div class="fcard" style="--fc:var(--dev-weak)"><span class="fico"><span data-icon="mic" data-c="#5b86d6"></span></span><div><b>灰度发布风险评估 · 会议纪要</b><span>Agent 生成 · 14:30 · 大凯已审核</span></div><span class="tag ok">已归档</span></div>
       </div>
       <div class="panel trend rv d6" style="--tc:var(--dev)">
@@ -442,7 +441,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       <div class="kpi"><span class="k-lbl">今日完成</span><b><i data-count="2">0</i> 项</b><span class="k-delta flat">3 项进行中</span></div>
       <div class="kpi"><span class="k-lbl">需求池</span><b><i data-count="14">0</i> 条</b><span class="k-delta flat">5 待评审 · 6 排期中</span></div>
       <div class="kpi"><span class="k-lbl">新增沉淀</span><b><i data-count="5">0</i> 条</b><span class="k-delta up">定稿 ×1 · 评审 ×2</span></div>
-      <div class="kpi"><span class="k-lbl">共享区被调用</span><b><i data-count="7">0</i> 次</b><span class="k-delta up">产品介绍最热 · 3 次</span></div>
+      <div class="kpi"><span class="k-lbl">共享区被调用</span><b><i data-count="7">0</i> 次</b><span class="k-delta up">产品介绍最热 · 2 次</span></div>
     </div>
     <div class="grid g21">
       <div class="panel rv d3">
@@ -502,7 +501,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
         <div class="client">
           <div class="c-hd"><b>星辰机械</b><span class="tag ok">已回款 ¥50,000</span></div>
           <div class="cc-row"><i></i>关键人：采购部王总 · 习惯线下拜访</div>
-          <div class="cc-row"><i></i>下一步：8 月初确认培训排期 · 交接给大鹏</div>
+          <div class="cc-row"><i></i>下一步：8 月初确认培训排期 · 下周起大鹏代跟</div>
         </div>
         <div class="client">
           <div class="c-hd"><b>华亭制造</b><span class="tag ing">方案已递交</span></div>
@@ -539,7 +538,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
       <div class="mem-strip"><span class="ava" data-ava="afei"></span><span class="ava" data-ava="taozi"></span><span class="ava" data-ava="akun"></span><span class="ava" data-ava="wenwen"></span><span class="mcount">5 人</span></div>
     </div>
     <div class="kpis rv d2">
-      <div class="kpi"><span class="k-lbl">本周发布</span><b><i data-count="9">0</i> 条</b><span class="k-delta up">▲ 2 · 较上周</span></div>
+      <div class="kpi"><span class="k-lbl">本周发布</span><b><i data-count="10">0</i> 条</b><span class="k-delta up">▲ 3 · 较上周</span></div>
       <div class="kpi"><span class="k-lbl">新增线索</span><b><i data-count="41">0</i> 条</b><span class="k-delta up">▲ 15% · 已转给市场 18 条</span></div>
       <div class="kpi"><span class="k-lbl">获客成本</span><b>¥<i data-count="47">0</i></b><span class="k-delta down">▼ 18% · 素材复用见效</span></div>
       <div class="kpi"><span class="k-lbl">素材库沉淀</span><b><i data-count="12">0</i> 件</b><span class="k-delta up">全部可跨渠道复用</span></div>
@@ -562,7 +561,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
           <path class="tr-line" d="M6,26 C36,30 58,34 84,42 C112,50 134,56 160,64 C182,70 200,74 214,76"/>
           <circle class="tr-dot" cx="214" cy="76" r="4" fill="#e8836b"/>
         </svg>
-        <div class="tr-foot" style="--tc:#c0503a"><b>¥47 / 线索</b><span>六周前 ¥58 · 累计 ▼ 18%</span></div>
+        <div class="tr-foot" style="--tc:#c0503a"><b>¥47 / 线索</b><span>六周前 ¥57 · 累计 ▼ 18%</span></div>
       </div>
     </div>
     <div class="grid g2">
@@ -702,14 +701,15 @@ document.querySelectorAll('[data-icon]').forEach(el=>{
    ============================================================ */
 function runCounters(root){
   root.querySelectorAll('[data-count]').forEach(el=>{
+    if(el._raf)cancelAnimationFrame(el._raf);   /* one live loop per element */
     const target=+el.dataset.count,t0=performance.now(),dur=1200,fmt=el.dataset.fmt;
     function tick(now){
       const p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,3);
       const v=Math.round(target*e);
       el.textContent=fmt?v.toLocaleString('en-US'):v;
-      if(p<1)requestAnimationFrame(tick);
+      if(p<1)el._raf=requestAnimationFrame(tick);else el._raf=null;
     }
-    requestAnimationFrame(tick);
+    el._raf=requestAnimationFrame(tick);
   });
 }
 /* ============================================================
@@ -720,7 +720,7 @@ const views=[...document.querySelectorAll('.view')];
 const navBtns=[...document.querySelectorAll('.nav-item')];
 let curView='v-home';
 function show(id){
-  if(!TITLES[id])return;
+  if(!TITLES[id]||id===curView)return;
   curView=id;
   views.forEach(v=>{
     const on=v.id===id;
@@ -745,7 +745,7 @@ document.addEventListener('click',e=>{
   if(a)ask(a.dataset.ask);
 });
 document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='INPUT')return;
+  if(e.target.tagName==='INPUT'||e.repeat)return;
   const map={'1':'v-home','2':'v-dev','3':'v-prod','4':'v-mkt','5':'v-ad'};
   if(map[e.key])show(map[e.key]);
 });
@@ -754,9 +754,9 @@ document.addEventListener('keydown',e=>{
    ============================================================ */
 const QA={
   'v-home':[
-    ['明早的例会，有必要开吗？','今天 12 项任务全部有记录、3 个跨部门请求已闭环 —— <b>没有需要同步的事</b>。建议改成一条晚报。','来源：今日全部门任务流 · 21:00 汇总'],
+    ['明早的例会，有必要开吗？','今天 12 项任务全部有记录；跨部门请求 3 件闭环、1 件新建（获客数据口径，已有人认领）—— <b>没有需要开会同步的事</b>。建议改成一条晚报。','来源：今日全部门任务流 · 21:00 汇总'],
     ['这周最该表扬谁？','数据上是<b>桃子</b>：小红书 4 条内容带来 18 条线索，占全渠道 44%，成本最低。','来源：渠道矩阵 · 线索归因'],
-    ['公司现在最大的风险是什么？','<b>华亭制造推进停滞 5 天</b>（等对方技术评估），且渠道年框报价还压在你这里 —— 两件事都在市场销售部。','来源：跟进档案 · 待办时效分析']
+    ['公司现在最大的风险是什么？','<b>华亭制造推进停滞 3 天</b>（等对方技术评估），且渠道年框报价还压在你这里 —— 两件事都在市场销售部。','来源：跟进档案 · 待办时效分析']
   ],
   'v-dev':[
     ['新版本什么时候能发？','测试进行中，按当前进度<b>预计下周三</b>。唯一风险：支付链路回归还剩 40%，小艾在跑。','来源：v2.4 里程碑 · 今日待办'],
@@ -764,14 +764,14 @@ const QA={
     ['老周最近在忙什么？','推荐算法灰度方案，评审材料准备中 —— 这周他 3 项任务全部按期。','来源：任务流 · 个人视图']
   ],
   'v-prod':[
-    ['新版产品介绍谁都能拿吗？','已放<b>全公司共享区</b>，今天被跨部门取走 3 次（研发、市场、营销各一次）。','来源：共享区调用日志'],
+    ['新版产品介绍谁都能拿吗？','已放<b>全公司共享区</b>，今天被跨部门取走 2 次（研发、市场各一次）。','来源：共享区调用日志'],
     ['需求池里最老的一条压了多久？','「客户报表导出」压了 <b>19 天</b>，卡在优先级 —— 建议下周二评审会给个说法。','来源：需求池 · 时效排序'],
     ['展会物料来得及吗？','小雅进度 60%，周三前交付<b>无风险</b> —— 素材已从营销部素材库复用了 5 件。','来源：交付物进度 · 素材库日志']
   ],
   'v-mkt':[
     ['渠道年框 9 折，值不值得答应？','按对方渠道体量，预计带来 <b>¥300,000 管道</b>；9 折让利约 ¥30,000。历史上类似让利的两单，回收周期 2 个月 —— <b>数据上值得</b>，老康也持同意见。','来源：报价单 · 会谈纪要 · 历史成交对比'],
-    ['星辰机械下一步是什么？','8 月初确认培训排期。阿妍下周休假，<b>已交接大鹏</b>，完整档案他已接收。','来源：跟进档案 · 交接记录'],
-    ['华亭制造卡在哪了？','方案递交后对方技术部评估中，已等 5 天。下一步：<b>周五前电话回访</b>（老康）。','来源：跟进档案 · 待办时效']
+    ['星辰机械下一步是什么？','8 月初确认培训排期。阿妍下周休婚假，<b>下周起大鹏代跟</b> —— 完整档案 Agent 已备好，他随时能接。','来源：跟进档案 · 交接安排'],
+    ['华亭制造卡在哪了？','方案递交后对方技术部评估中，已等 3 天。下一步：<b>周五前电话回访</b>（老康）。','来源：跟进档案 · 待办时效']
   ],
   'v-ad':[
     ['哪个渠道值得加预算？','<b>小红书</b>：线索成本最低、素材复用率最高。小鹿建议 +20% 预算，按本周数据我同意这个判断。','来源：渠道矩阵 · 成本归因'],
@@ -783,7 +783,8 @@ const chipBox=document.getElementById('chipBox');
 const ansBox=document.getElementById('ansBox');
 const ansBody=document.getElementById('ansBody');
 const askInput=document.getElementById('askInput');
-let ansTimer=null,typeTimers=[];
+let ansTimer=null,typeTimers=[],asking=false;
+const HAS_POINTER=matchMedia('(hover:hover)').matches; /* skip focus on touch — no surprise keyboard */
 function setChips(id){
   chipBox.querySelectorAll('.chip').forEach(c=>c.remove());
   (QA[id]||[]).forEach(([q])=>{
@@ -793,12 +794,17 @@ function setChips(id){
     chipBox.appendChild(b);
   });
 }
-function hideAns(){ansBox.classList.remove('show');clearTimeout(ansTimer);typeTimers.forEach(clearTimeout);typeTimers=[]}
+function hideAns(){
+  ansBox.classList.remove('show');clearTimeout(ansTimer);
+  typeTimers.forEach(clearTimeout);typeTimers=[];
+  if(asking){askInput.value='';asking=false} /* don't leave a half-typed question behind */
+}
 document.getElementById('ansClose').onclick=hideAns;
 function ask(q){
   hideAns();
+  asking=true;
   /* type the question into the field */
-  askInput.value='';askInput.focus();
+  askInput.value='';if(HAS_POINTER)askInput.focus();
   [...q].forEach((ch,i)=>typeTimers.push(setTimeout(()=>{askInput.value+=ch},i*38)));
   const tq=q.length*38+250;
   /* thinking dots, then the answer */
@@ -811,17 +817,22 @@ function ask(q){
     const a=hit?hit[1]:'这是演示环境，我的知识只覆盖这家示例公司 —— 试试下面的推荐问题。真实环境里，我会翻遍全公司的沉淀来回答这句。';
     const src=hit?hit[2]:'来源：演示数据';
     ansBody.innerHTML=a+`<span class="a-src">${src} · 10 秒生成</span>`;
-    askInput.value='';
+    askInput.value='';asking=false;
     ansTimer=setTimeout(hideAns,15000);
   },tq+1400));
 }
 document.getElementById('askGo').onclick=()=>{const q=askInput.value.trim();if(q)ask(q)};
-askInput.addEventListener('keydown',e=>{if(e.key==='Enter'){const q=askInput.value.trim();if(q)ask(q)}});
+askInput.addEventListener('keydown',e=>{
+  if(e.isComposing||e.keyCode===229)return; /* ignore IME composition Enter */
+  if(e.key==='Enter'){const q=askInput.value.trim();if(q)ask(q)}
+});
 /* ============================================================
    BOOT
    ============================================================ */
 setChips('v-home');
 runCounters(document.getElementById('v-home'));
+/* let first paint land at initial values, then play the entry animations */
+requestAnimationFrame(()=>requestAnimationFrame(()=>document.getElementById('v-home').classList.add('animate')));
 </script>
 </body>
 </html>

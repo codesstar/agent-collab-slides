@@ -347,6 +347,10 @@ p,li,blockquote{overflow-wrap:break-word}
 /* data flow */
 .flow-card{position:absolute;transform:translate(-50%,-50%);background:var(--surface);border:1px solid var(--line-2);
   border-radius:1.4cqw;box-shadow:var(--shadow-sm);padding:.9cqw 1.3cqw;display:flex;align-items:center;gap:.9cqw;z-index:3}
+.flow-card.boss-card{border:.18cqw solid rgba(16,185,129,.55);box-shadow:var(--shadow)}
+.flow-card.boss-card b{color:var(--accent-ink)}
+.boss-tag{position:absolute;top:-1cqw;right:1cqw;font-family:var(--mono);font-size:.9cqw;font-weight:600;
+  letter-spacing:.12em;color:#fff;background:var(--accent);border-radius:.55cqw;padding:.2cqw .7cqw}
 .flow-card .fc-ico{width:3cqw;height:3cqw;border-radius:.9cqw;display:grid;place-items:center;flex:none}
 .flow-card .fc-ico svg{width:1.6cqw;height:1.6cqw}
 .flow-card b{font-size:1.35cqw;display:block;line-height:1.3}
@@ -423,7 +427,7 @@ p,li,blockquote{overflow-wrap:break-word}
 .minutes-hd span{margin-left:auto;font-family:var(--mono);font-size:clamp(.54rem,.78vw,.68rem);color:var(--ink-3)}
 .minutes-bd{padding:clamp(10px,1.6vh,15px) clamp(13px,1.6vw,18px)}
 .minutes .mn-line{font-size:clamp(.72rem,1.05vw,.9rem);color:var(--ink-2);line-height:1.7;min-height:1.5em}
-.minutes .mn-line .caret{display:inline-block;width:2px;height:1em;background:var(--accent);vertical-align:-.15em;
+.minutes .mn-line .caret,.ask-q .caret{display:inline-block;width:2px;height:1em;background:var(--accent);vertical-align:-.15em;
   animation:blink .8s step-end infinite;margin-left:1px}
 @keyframes blink{50%{opacity:0}}
 .task-row{display:flex;align-items:center;gap:9px;padding:clamp(5px,1vh,8px) 0;border-top:1px dashed var(--line)}
@@ -500,7 +504,73 @@ p,li,blockquote{overflow-wrap:break-word}
   font-size:clamp(.78rem,1.15vw,.98rem);line-height:1.75;color:var(--ink);box-shadow:var(--shadow-sm)}
 .digest-msg .bubble b{color:var(--accent-ink)}
 /* ============================================================
-   S12 — VALUE  ·  S13 — CLOSING
+   S12 — BOSS DASHBOARD (驾驶舱)
+   ============================================================ */
+.dash{width:100%;max-width:min(96vw,1150px);margin:clamp(.5rem,1.6vh,1rem) auto 0;background:var(--surface);
+  border:1px solid var(--line-2);border-radius:22px;box-shadow:var(--shadow-lg);overflow:hidden;
+  display:flex;flex-direction:column}
+.dash-hd{display:flex;align-items:center;gap:10px;padding:clamp(8px,1.4vh,13px) clamp(14px,1.8vw,22px);
+  border-bottom:1px solid var(--line);background:var(--surface-2)}
+.dash-hd b{font-size:clamp(.8rem,1.2vw,1rem)}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.6s ease infinite;flex:none}
+.dash-tabs{display:flex;gap:4px;margin-left:10px}
+.dash-tabs span{font-family:var(--mono);font-size:clamp(.54rem,.78vw,.68rem);padding:3px 10px;border-radius:999px;color:var(--ink-3)}
+.dash-tabs .on-tab{background:var(--accent-weak);color:var(--accent-ink);font-weight:600}
+.dash-hd .dh-date{margin-left:auto;font-family:var(--mono);font-size:clamp(.54rem,.78vw,.7rem);color:var(--ink-3)}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+.kpi{background:var(--surface);padding:clamp(8px,1.5vh,14px) clamp(12px,1.6vw,20px)}
+.kpi .k-lbl{font-family:var(--mono);font-size:clamp(.52rem,.76vw,.66rem);letter-spacing:.08em;color:var(--ink-3);display:block}
+.kpi>b{font-family:var(--mono);font-size:clamp(1.15rem,2.4vw,2.1rem);font-weight:600;line-height:1.15;display:block;margin-top:3px}
+.kpi b i{font-style:normal}
+.kpi .k-delta{font-family:var(--mono);font-size:clamp(.52rem,.78vw,.68rem);margin-top:2px;display:block}
+.k-delta.up{color:var(--accent-ink)}
+.k-delta.warn{color:#8a6d34}
+.kpi.attn{background:linear-gradient(160deg,#fdf8ec,#f9efdc)}
+.dash-grid{display:grid;grid-template-columns:1.15fr 1fr 1.05fr;gap:1px;background:var(--line)}
+.panel{background:var(--surface);padding:clamp(9px,1.5vh,14px) clamp(12px,1.5vw,18px);min-width:0}
+.panel h5{font-family:var(--mono);font-size:clamp(.52rem,.76vw,.66rem);letter-spacing:.1em;color:var(--ink-3);
+  text-transform:uppercase;margin-bottom:clamp(6px,1.2vh,10px);font-weight:600}
+/* dept progress bars — every mark carries its text label (no legend) */
+.db-row{display:flex;align-items:center;gap:8px;padding:clamp(5px,1.2vh,10px) 0}
+.db-name{display:flex;align-items:center;gap:6px;font-size:clamp(.64rem,.95vw,.82rem);color:var(--ink-2);
+  width:clamp(56px,6.2vw,80px);flex:none}
+.db-name i{width:8px;height:8px;border-radius:3px;flex:none}
+.db-bar{flex:1;height:clamp(10px,1.6vh,14px);display:flex;gap:2px;align-items:stretch}
+.db-bar i,.db-bar em{display:block;width:0;transition:width 1s var(--ease-out-expo) .3s}
+.db-bar i{background:var(--bc);border-radius:3px 4px 4px 3px}
+.db-bar em{background:color-mix(in srgb,var(--bc) 28%,#fff);border-radius:3px 4px 4px 3px;transition-delay:.55s}
+.visible .db-bar i{width:var(--w1)}
+.visible .db-bar em{width:var(--w2)}
+.db-num{font-family:var(--mono);font-size:clamp(.52rem,.78vw,.66rem);color:var(--ink-3);flex:none;text-align:right;
+  width:clamp(72px,7.4vw,96px)}
+/* sediment trend */
+.trend svg{width:100%;height:clamp(70px,16vh,150px);display:block}
+.trend .tr-line{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;
+  stroke-dasharray:340;stroke-dashoffset:340;transition:stroke-dashoffset 1.6s var(--ease-out-expo) .4s}
+.visible .trend .tr-line{stroke-dashoffset:0}
+.trend .tr-fill{opacity:0;transition:opacity .9s ease 1.3s}
+.visible .trend .tr-fill{opacity:1}
+.trend .tr-dot{opacity:0;transition:opacity .4s ease 1.9s}
+.visible .trend .tr-dot{opacity:1}
+.tr-foot{display:flex;align-items:baseline;gap:8px;margin-top:4px;flex-wrap:wrap}
+.tr-foot b{font-family:var(--mono);font-size:clamp(.85rem,1.5vw,1.25rem);color:var(--accent-ink)}
+.tr-foot span{font-family:var(--mono);font-size:clamp(.5rem,.76vw,.64rem);color:var(--ink-3)}
+/* highlights feed */
+.fd-item{display:flex;gap:8px;align-items:flex-start;padding:clamp(5px,1.15vh,9px) 0;
+  font-size:clamp(.64rem,.95vw,.82rem);color:var(--ink-2);line-height:1.55}
+.fd-item i{width:8px;height:8px;border-radius:3px;flex:none;margin-top:4px}
+.fd-item b{color:var(--ink);font-weight:600}
+/* ask-the-agent bar */
+.ask-bar{display:flex;align-items:center;gap:10px;padding:clamp(8px,1.4vh,12px) clamp(14px,1.8vw,22px);
+  border-top:1px solid var(--line);background:linear-gradient(160deg,#f9fdfb,#eff9f4)}
+.ask-bar .ava{width:clamp(24px,2.3vw,30px);height:clamp(24px,2.3vw,30px);border-radius:50%;overflow:hidden;flex:none}
+.ask-q{font-size:clamp(.7rem,1.08vw,.9rem);color:var(--ink);min-width:0;flex:1;min-height:1.4em}
+.ask-a{display:flex;align-items:center;gap:8px;font-size:clamp(.66rem,1vw,.84rem);color:var(--ink-2);
+  opacity:0;transform:translateX(14px);transition:opacity .45s ease,transform .5s var(--ease-out-back);max-width:54%}
+.ask-a.on{opacity:1;transform:none}
+.ask-a b{color:var(--accent-ink)}
+/* ============================================================
+   S13 — VALUE  ·  S15 — CLOSING
    ============================================================ */
 .value-rows{display:flex;flex-direction:column;gap:clamp(.8rem,2.2vh,1.5rem);margin-top:var(--content-gap);
   max-width:min(92vw,860px)}
@@ -872,36 +942,62 @@ p,li,blockquote{overflow-wrap:break-word}
   </div>
 </section>
 
-<!-- ============ S12 · DAILY DIGEST ============ -->
-<section class="slide" aria-label="每日晚报" data-scene data-loop="0">
-  <div class="slide-content">
-    <div class="eyebrow rv">每天 21:00 · 自动生成</div>
-    <h2 class="h-serif rv d1" style="font-size:var(--h2-size);margin-top:clamp(.4rem,1.2vh,.8rem)">老板的一天，看这一页就够了</h2>
-    <div class="digest-grid">
-      <div class="dg-card rv d2" style="--dc:var(--dev)">
-        <h4><span class="ava" data-ava="dakai"></span>研发部</h4>
-        <div class="dg-nums"><div class="dg-num"><b data-count="3">0</b><span>完成</span></div><div class="dg-num"><b data-count="2">0</b><span>进行中</span></div><div class="dg-num"><b data-count="6">0</b><span>新增沉淀</span></div></div>
-        <p class="dg-note">接口联调完成，新版本进入测试。</p>
+<!-- ============ S12 · BOSS DASHBOARD ============ -->
+<section class="slide" aria-label="老板驾驶舱" data-scene data-loop="14000">
+  <div class="slide-content" style="justify-content:flex-start;padding-top:clamp(1rem,3vh,2.2rem)">
+    <div class="stage-top">
+      <div>
+        <div class="eyebrow rv">每天 21:00 · 自动生成</div>
+        <h2 class="h-serif rv d1" style="font-size:var(--h2-size);margin-top:clamp(.3rem,1vh,.6rem)">大公司才有的驾驶舱，现在你也有</h2>
       </div>
-      <div class="dg-card rv d3" style="--dc:var(--prod)">
-        <h4><span class="ava" data-ava="jingjie"></span>产品部</h4>
-        <div class="dg-nums"><div class="dg-num"><b data-count="2">0</b><span>完成</span></div><div class="dg-num"><b data-count="3">0</b><span>进行中</span></div><div class="dg-num"><b data-count="5">0</b><span>新增沉淀</span></div></div>
-        <p class="dg-note">新版产品介绍定稿，已入共享区。</p>
-      </div>
-      <div class="dg-card rv d4" style="--dc:var(--mkt)">
-        <h4><span class="ava" data-ava="laokang"></span>市场销售部</h4>
-        <div class="dg-nums"><div class="dg-num"><b data-count="4">0</b><span>完成</span></div><div class="dg-num"><b data-count="1">0</b><span>进行中</span></div><div class="dg-num"><b data-count="7">0</b><span>新增沉淀</span></div></div>
-        <p class="dg-note">星辰机械回款 5 万，两场试点确认。</p>
-      </div>
-      <div class="dg-card rv d5" style="--dc:var(--ad)">
-        <h4><span class="ava" data-ava="xiaolu"></span>广告营销部</h4>
-        <div class="dg-nums"><div class="dg-num"><b data-count="3">0</b><span>完成</span></div><div class="dg-num"><b data-count="2">0</b><span>进行中</span></div><div class="dg-num"><b data-count="5">0</b><span>新增沉淀</span></div></div>
-        <p class="dg-note">两条视频发布，获客素材已归档。</p>
-      </div>
+      <p class="rv d2" style="font-size:clamp(.74rem,1.1vw,.94rem);color:var(--ink-3);max-width:360px;line-height:1.65">
+        不用再等销售的周报、技术的月报 —— 报表自己长出来；看不懂的，随口问 Agent。</p>
     </div>
-    <div class="digest-msg rv d6">
-      <span class="ava" data-agent="1"></span>
-      <div class="bubble">老陈，今日全公司：<b>12 项完成</b> · 8 项进行中 · <b>23 条新增沉淀</b>；3 个跨部门协作请求全部闭环。明早例会，其实可以不开。</div>
+    <div class="dash rv d2">
+      <div class="dash-hd">
+        <span class="live-dot"></span><b>全公司 · 经营驾驶舱</b>
+        <div class="dash-tabs"><span class="on-tab">今日</span><span>本周</span><span>本月</span></div>
+        <span class="dh-date">07-17 周四 · 21:00 更新</span>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi"><span class="k-lbl">本周回款</span><b>¥<i data-count="86000" data-fmt="1">0</i></b><span class="k-delta up">▲ 32% · 环比上周</span></div>
+        <div class="kpi"><span class="k-lbl">今日完成任务</span><b><i data-count="12">0</i> 项</b><span class="k-delta up">▲ 3 · 较昨日</span></div>
+        <div class="kpi"><span class="k-lbl">新增沉淀</span><b><i data-count="23">0</i> 条</b><span class="k-delta up">▲ 8 · 较昨日</span></div>
+        <div class="kpi attn"><span class="k-lbl">待老板拍板</span><b><i data-count="1">0</i> 件</b><span class="k-delta warn">渠道合作报价 · 等你点头</span></div>
+      </div>
+      <div class="dash-grid">
+        <div class="panel">
+          <h5>部门推进 · 今日</h5>
+          <div class="db-row"><span class="db-name"><i style="background:var(--dev)"></i>研发部</span><div class="db-bar" style="--bc:var(--dev)"><i style="--w1:60%"></i><em style="--w2:40%"></em></div><span class="db-num">3 完成 · 2 进行</span></div>
+          <div class="db-row"><span class="db-name"><i style="background:var(--prod)"></i>产品部</span><div class="db-bar" style="--bc:var(--prod)"><i style="--w1:40%"></i><em style="--w2:60%"></em></div><span class="db-num">2 完成 · 3 进行</span></div>
+          <div class="db-row"><span class="db-name"><i style="background:var(--mkt)"></i>市场销售部</span><div class="db-bar" style="--bc:var(--mkt)"><i style="--w1:80%"></i><em style="--w2:20%"></em></div><span class="db-num">4 完成 · 1 进行</span></div>
+          <div class="db-row"><span class="db-name"><i style="background:var(--ad)"></i>广告营销部</span><div class="db-bar" style="--bc:var(--ad)"><i style="--w1:60%"></i><em style="--w2:40%"></em></div><span class="db-num">3 完成 · 2 进行</span></div>
+        </div>
+        <div class="panel trend">
+          <h5>知识沉淀 · 近 7 天累计</h5>
+          <svg viewBox="0 0 220 100" preserveAspectRatio="none" aria-hidden="true">
+            <defs><linearGradient id="trGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="rgba(16,185,129,.28)"/><stop offset="1" stop-color="rgba(16,185,129,0)"/>
+            </linearGradient></defs>
+            <path class="tr-fill" fill="url(#trGrad)" d="M6,86 C28,80 36,76 50,71 C70,64 78,61 94,55 C114,47 122,45 136,40 C158,31 170,27 186,23 C198,20 206,18 214,16 L214,98 L6,98 Z"/>
+            <path class="tr-line" d="M6,86 C28,80 36,76 50,71 C70,64 78,61 94,55 C114,47 122,45 136,40 C158,31 170,27 186,23 C198,20 206,18 214,16"/>
+            <circle class="tr-dot" cx="214" cy="16" r="4" fill="#10b981"/>
+          </svg>
+          <div class="tr-foot"><b>+131 条</b><span>本周累计 · 今日 +23 · 总库 259 条</span></div>
+        </div>
+        <div class="panel">
+          <h5>今晚亮点</h5>
+          <div class="fd-item"><i style="background:var(--mkt)"></i><span><b>市场销售</b> —— 星辰机械回款 ¥50,000，两场试点确认</span></div>
+          <div class="fd-item"><i style="background:var(--prod)"></i><span><b>产品</b> —— 新版产品介绍定稿，已入共享区</span></div>
+          <div class="fd-item"><i style="background:var(--dev)"></i><span><b>研发</b> —— 接口联调完成，新版本进入测试</span></div>
+          <div class="fd-item"><i style="background:var(--ad)"></i><span><b>广告营销</b> —— 两条视频发布，获客素材已归档</span></div>
+        </div>
+      </div>
+      <div class="ask-bar">
+        <span class="ava" data-ava="boss"></span>
+        <p class="ask-q" data-type-line="1">广告营销这周的获客成本，降了没？</p>
+        <div class="ask-a" data-t="6400"><span class="ava" data-agent="1"></span><span>降了 <b>18%</b> —— 小红书素材复用率上来了。要看明细吗？</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1189,15 +1285,17 @@ document.querySelectorAll('[data-icon]').forEach(el=>{
               ['file','文件资料','报价单 · PPT · 合同',218,'#9b7ed0','#efe9f9'],
               ['mic','会议讨论','结论与待办',326,'#e0a23c','#f7efdf'],
               ['check','进度反馈','「做完了」「已付款」',434,'#e8836b','#fbe9e3']];
-  const cons=[['eye','同事随时问','不再打扰任何人',96],
-              ['moon','负责人晚报','进度自动汇总',210],
-              ['bank','老板全局视图','四个部门尽收眼底',324],
+  /* boss view first — the talk is ultimately pitched at the boss */
+  const cons=[['bank','老板全局视图','驾驶舱 · 四个部门尽收眼底',96],
+              ['eye','同事随时问','不再打扰任何人',210],
+              ['moon','负责人晚报','进度自动汇总',324],
               ['seed','新人入职包','第一天接上共享沉淀',438]];
   const shelves=[['研发部','#5b86d6'],['产品部','#9b7ed0'],['市场销售部','#e0a23c'],['广告营销部','#e8836b']];
   const AG=[386,272];
   const srcHTML=srcs.map(([ic,t,s,y,c,w],i)=>`<div class="flow-card" style="left:13.5%;top:${y/5.4}%;width:19cqw">
       <span class="fc-ico" style="background:${w}">${iconSVG(ic,c)}</span><div><b>${t}</b><span>${s}</span></div></div>`).join('');
-  const conHTML=cons.map(([ic,t,s,y])=>`<div class="flow-card" style="left:87%;top:${y/5.4}%;width:20cqw">
+  const conHTML=cons.map(([ic,t,s,y],i)=>`<div class="flow-card${i===0?' boss-card':''}" style="left:87%;top:${y/5.4}%;width:20cqw">
+      ${i===0?'<span class="boss-tag">BOSS</span>':''}
       <span class="fc-ico" style="background:var(--accent-weak)">${iconSVG(ic,'#047857')}</span><div><b>${t}</b><span>${s}</span></div></div>`).join('');
   const bankHTML=`<div class="bank" style="left:62%;top:50.4%">
       <div class="bank-title"><span style="width:1.9cqw;height:1.9cqw;flex:none;display:inline-block">${iconSVG('bank','#047857')}</span>公司记忆库</div>
@@ -1340,13 +1438,14 @@ document.querySelectorAll('[data-scene]').forEach(bindScene);
     timer=setInterval(()=>{if(Date.now()-paused>12000)show((cur+1)%chats.length)},10000)};
   slide._painStop=()=>{clearInterval(timer);chats.forEach(c=>c._stop&&c._stop())};
 })();
-/* counters */
+/* counters — data-fmt adds thousands separators */
 function runCounters(slide){
   slide.querySelectorAll('[data-count]').forEach(el=>{
-    const target=+el.dataset.count,t0=performance.now(),dur=1300;
+    const target=+el.dataset.count,t0=performance.now(),dur=1300,fmt=el.dataset.fmt;
     function tick(now){
       const p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,3);
-      el.textContent=Math.round(target*e);
+      const v=Math.round(target*e);
+      el.textContent=fmt?v.toLocaleString('en-US'):v;
       if(p<1)requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);

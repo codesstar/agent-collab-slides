@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>经营驾驶舱 · Agent 公司记忆</title>
+<title>公司大脑 · Agent 经营中心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -273,6 +273,65 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .ans .tdots{display:inline-flex;gap:4px;align-items:center;padding:4px 0}
 .ans .tdots i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:tb 1s ease infinite}
 .ans .tdots i:nth-child(2){animation-delay:.15s}.ans .tdots i:nth-child(3){animation-delay:.3s}
+/* ring gauge */
+.ring{display:flex;align-items:center;gap:14px}
+.rg-wrap{position:relative;width:94px;height:94px;flex:none}
+.rg-wrap svg{width:100%;height:100%;transform:rotate(-90deg)}
+.rg-wrap>b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:18px;font-weight:600}
+.rg-bg{fill:none;stroke:var(--surface-3);stroke-width:9}
+.rg-fg{fill:none;stroke:var(--rc,var(--accent));stroke-width:9;stroke-linecap:round;
+  stroke-dasharray:264;stroke-dashoffset:264;transition:stroke-dashoffset 1.4s var(--ease) .4s}
+.view.animate .rg-fg{stroke-dashoffset:var(--off)}
+.rg-info p{font-size:13px}
+.rg-info p b{font-family:var(--mono)}
+.rg-info span{font-family:var(--mono);font-size:10px;color:var(--ink-3);display:block;margin-top:4px;line-height:1.7}
+/* AI insight cards */
+.ins{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border-radius:12px;
+  border:1px solid var(--line);background:var(--surface-2);margin-top:8px}
+.ins:first-of-type{margin-top:0}
+.ins .iico{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;background:var(--accent-weak)}
+.ins .iico svg{width:14px;height:14px}
+.ins p{font-size:12px;color:var(--ink-2);line-height:1.6}
+.ins p b{color:var(--ink)}
+.ins.good{border-color:rgba(16,185,129,.3);background:#f2fbf7}
+.ins.warn{border-color:rgba(224,162,60,.4);background:#fdf8ec}
+.ins.warn .iico{background:var(--mkt-weak)}
+/* commit heatmap */
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:2px}
+.heat i{aspect-ratio:1.6;border-radius:3px;background:var(--dev);opacity:var(--o,.08)}
+.heat-foot{display:flex;gap:8px;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--ink-3);align-items:baseline}
+.heat-foot b{font-size:14px;color:var(--ink);font-family:var(--mono)}
+/* leaderboard */
+.lb-row{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px dashed var(--line)}
+.lb-row:first-of-type{border-top:none}
+.lb-rank{font-family:var(--serif);font-style:italic;font-weight:700;width:16px;color:var(--ink-4);flex:none;font-size:15px}
+.lb-row.top .lb-rank{color:var(--mkt)}
+.lb-row .ava{width:26px;height:26px;border-radius:50%;overflow:hidden;flex:none}
+.lb-name{width:46px;font-size:12.5px;flex:none}
+.lb-bar{flex:1;height:10px}
+.lb-bar i{display:block;height:100%;width:0;border-radius:3px 4px 4px 3px;background:var(--lb,var(--mkt));
+  transition:width .9s var(--ease) .35s}
+.view.animate .lb-bar i{width:var(--w)}
+.lb-amt{font-family:var(--mono);font-size:11px;color:var(--ink-2);width:70px;flex:none;text-align:right}
+/* top content ranking */
+.top-item{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px dashed var(--line)}
+.top-item:first-of-type{border-top:none}
+.tp-rank{width:22px;height:22px;border-radius:7px;background:var(--surface-3);display:grid;place-items:center;
+  font-family:var(--serif);font-style:italic;font-weight:700;font-size:12px;color:var(--ink-3);flex:none}
+.top-item.n1 .tp-rank{background:var(--ad);color:#fff}
+.tp-body{min-width:0}
+.tp-body b{font-size:12.5px;display:block;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tp-body span{font-family:var(--mono);font-size:9.5px;color:var(--ink-3)}
+.tp-num{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--ink-2);flex:none;text-align:right}
+/* content calendar */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:2px}
+.cal .cd{border:1px solid var(--line);border-radius:8px;padding:6px 3px 7px;text-align:center;background:var(--surface-2)}
+.cal .cd b{font-family:var(--mono);font-size:9px;color:var(--ink-3);display:block;font-weight:500}
+.cal .dots{display:flex;gap:3px;justify-content:center;margin-top:5px;min-height:6px;flex-wrap:wrap}
+.cal .dots i{width:6px;height:6px;border-radius:50%}
+.cal .cd.today{border-color:var(--ad);background:#fdf3ef}
+.cal .cd.plan{border-style:dashed}
+.cal-foot{margin-top:8px;font-family:var(--mono);font-size:9.5px;color:var(--ink-3);line-height:1.7}
 /* ============================================================
    RESPONSIVE
    ============================================================ */
@@ -296,7 +355,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 <body>
 <aside class="sidebar">
   <div class="brand"><span class="ava" data-agent="1"></span>
-    <div><b>经营驾驶舱</b><span>AGENT · 公司记忆</span></div></div>
+    <div><b>公司大脑</b><span>AGENT · 经营中心</span></div></div>
   <nav class="nav">
     <span class="nav-lbl">视图 · VIEWS</span>
     <button class="nav-item act" data-view="v-home" style="--nc:var(--accent)"><i class="nd"></i>公司总览<span class="nk">1</span></button>
@@ -373,6 +432,34 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
         <div class="fd-item"><i class="dot" style="background:var(--prod)"></i><span>新版产品介绍 v3 定稿</span><span class="when">周四</span></div>
       </div>
     </div>
+    <div class="grid g3">
+      <div class="panel rv d5">
+        <h5>Agent 主动洞察 · 今晚 3 条</h5>
+        <div class="ins good"><span class="iico"><span data-icon="spark" data-c="#047857"></span></span><p><b>获客成本连降 6 周</b> —— 素材复用体系起效，建议保持当前打法。</p></div>
+        <div class="ins warn"><span class="iico"><span data-icon="spark" data-c="#8a6d34"></span></span><p><b>华亭制造停滞 3 天</b> —— 已提醒老康周五前回访，超期会再报给你。</p></div>
+        <div class="ins good"><span class="iico"><span data-icon="spark" data-c="#047857"></span></span><p><b>跨部门请求平均 8 分钟闭环</b> —— 本周没有一件卡超过半天。</p></div>
+      </div>
+      <div class="panel rv d5">
+        <h5>Q3 回款目标</h5>
+        <div class="ring" style="--rc:var(--accent);--off:150">
+          <div class="rg-wrap">
+            <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="rg-bg" cx="50" cy="50" r="42"/><circle class="rg-fg" cx="50" cy="50" r="42"/></svg>
+            <b>43%</b>
+          </div>
+          <div class="rg-info">
+            <p><b>¥215,000</b> / ¥500,000</p>
+            <span>在途管道 ¥420,000<br>按转化率推演 · 季末预计 85%</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel rv d6">
+        <h5>记忆库构成 · 共 259 条</h5>
+        <div class="fn-row"><span class="fn-name">文件资料</span><div class="fn-bar"><i style="--w:86%;--fb:#10b981;--fd:.25s"></i></div><span class="fn-num">112 条</span></div>
+        <div class="fn-row"><span class="fn-name">会议纪要</span><div class="fn-bar"><i style="--w:49%;--fb:#34d399;--fd:.38s"></i></div><span class="fn-num">64 条</span></div>
+        <div class="fn-row"><span class="fn-name">客户档案</span><div class="fn-bar"><i style="--w:35%;--fb:#6ee7b7;--fd:.51s"></i></div><span class="fn-num">45 条</span></div>
+        <div class="fn-row"><span class="fn-name">决策记录</span><div class="fn-bar"><i style="--w:29%;--fb:#a7f3d0;--fd:.64s"></i></div><span class="fn-num">38 条</span></div>
+      </div>
+    </div>
   </section>
 
   <!-- ================= 研发部 ================= -->
@@ -428,6 +515,25 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
         <div class="tr-foot" style="--tc:#3f68b5"><b>18 项 / 周</b><span>较上周 ▲ 4 · 无延期</span></div>
       </div>
     </div>
+    <div class="grid g21">
+      <div class="panel rv d6">
+        <h5>提交热力 · 近 4 周</h5>
+        <div class="heat" aria-hidden="true">
+          <i style="--o:.15"></i><i style="--o:.35"></i><i style="--o:.5"></i><i style="--o:.3"></i><i style="--o:.45"></i><i style="--o:.08"></i><i style="--o:.06"></i>
+          <i style="--o:.3"></i><i style="--o:.55"></i><i style="--o:.4"></i><i style="--o:.6"></i><i style="--o:.35"></i><i style="--o:.1"></i><i style="--o:.06"></i>
+          <i style="--o:.45"></i><i style="--o:.7"></i><i style="--o:.55"></i><i style="--o:.8"></i><i style="--o:.5"></i><i style="--o:.12"></i><i style="--o:.08"></i>
+          <i style="--o:.6"></i><i style="--o:.85"></i><i style="--o:.7"></i><i style="--o:1"></i><i style="--o:.65"></i><i style="--o:.15"></i><i style="--o:.1"></i>
+        </div>
+        <div class="heat-foot"><b>47 次</b><span>本周提交 · ▲ 12 较上周 · 周四最活跃</span></div>
+      </div>
+      <div class="panel rv d6">
+        <h5>成员负载 · 本周任务</h5>
+        <div class="ch-row"><span class="ava" data-ava="azhe"></span><span class="ch-name">阿哲</span><div class="ch-bar"><i style="--w:88%;--cb:#3f68b5"></i></div><span class="ch-num">5 项 · 联调主力</span></div>
+        <div class="ch-row"><span class="ava" data-ava="xiaolin"></span><span class="ch-name">小林</span><div class="ch-bar"><i style="--w:70%;--cb:#5b86d6"></i></div><span class="ch-num">4 项 · 无延期</span></div>
+        <div class="ch-row"><span class="ava" data-ava="xiaoai"></span><span class="ch-name">小艾</span><div class="ch-bar"><i style="--w:53%;--cb:#7c9fdd"></i></div><span class="ch-num">3 项 · 回归测试中</span></div>
+        <div class="ch-row"><span class="ava" data-ava="laozhou"></span><span class="ch-name">老周</span><div class="ch-bar"><i style="--w:53%;--cb:#a3bce8"></i></div><span class="ch-num">3 项 · 评审准备</span></div>
+      </div>
+    </div>
   </section>
 
   <!-- ================= 产品部 ================= -->
@@ -470,6 +576,26 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
         <div class="ok-item"><span class="okc"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.5 5 9 9.5 3.5" stroke="#047857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>阿哲（研发）取走 产品介绍 v3 —— 15:47</div>
         <div class="ok-item"><span class="okc"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.5 5 9 9.5 3.5" stroke="#047857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>阿妍（市场）取走 产品介绍 v3 —— 17:02</div>
         <div class="ok-item"><span class="okc"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.5 5 9 9.5 3.5" stroke="#047857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>桃子（营销）取走 品牌素材包 —— 11:20</div>
+      </div>
+    </div>
+    <div class="grid g21">
+      <div class="panel rv d6">
+        <h5>用户反馈 Top 主题 · 本月（Agent 从群聊与客服记录聚合）</h5>
+        <div class="fn-row"><span class="fn-name" style="width:76px">报表导出</span><div class="fn-bar"><i style="--w:82%;--fb:#7d5fb2;--fd:.25s"></i></div><span class="fn-num">12 次提及</span></div>
+        <div class="fn-row"><span class="fn-name" style="width:76px">移动端适配</span><div class="fn-bar"><i style="--w:62%;--fb:#9b7ed0;--fd:.38s"></i></div><span class="fn-num">9 次</span></div>
+        <div class="fn-row"><span class="fn-name" style="width:76px">权限细化</span><div class="fn-bar"><i style="--w:48%;--fb:#b49add;--fd:.51s"></i></div><span class="fn-num">7 次</span></div>
+        <div class="fn-row"><span class="fn-name" style="width:76px">深色模式</span><div class="fn-bar"><i style="--w:27%;--fb:#cdbceb;--fd:.64s"></i></div><span class="fn-num">4 次</span></div>
+        <div class="fd-item" style="margin-top:8px"><i class="dot" style="background:var(--prod)"></i><span>「报表导出」呼声最高 —— <b>已排进 v2.5</b>，静姐已在评审会拍板</span></div>
+      </div>
+      <div class="panel rv d6" style="--dc:var(--prod)">
+        <h5>版本路线 · Q3</h5>
+        <div class="steps" style="--sw:33%">
+          <span class="fill"></span>
+          <div class="step done"><span class="sdot"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.5 5 9 9.5 3.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>v2.3</span><small>6 月已上线</small></div>
+          <div class="step now"><span class="sdot">2</span><span>v2.4</span><small>下周三发布</small></div>
+          <div class="step"><span class="sdot">3</span><span>v2.5</span><small>8 月中 · 报表导出</small></div>
+          <div class="step"><span class="sdot">4</span><span>v3.0</span><small>9 月底 · AI 内嵌</small></div>
+        </div>
       </div>
     </div>
   </section>
@@ -528,6 +654,28 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
         <div class="tr-foot" style="--tc:#8a6d34"><b>¥86,000</b><span>本周 · 环比 ▲ 32%</span></div>
       </div>
     </div>
+    <div class="grid g21">
+      <div class="panel rv d6">
+        <h5>Q3 回款目标</h5>
+        <div class="ring" style="--rc:var(--mkt);--off:150">
+          <div class="rg-wrap">
+            <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="rg-bg" cx="50" cy="50" r="42"/><circle class="rg-fg" cx="50" cy="50" r="42"/></svg>
+            <b>43%</b>
+          </div>
+          <div class="rg-info">
+            <p><b>¥215,000</b> / ¥500,000</p>
+            <span>在途 ¥420,000 · 季末预计 85%<br>低于节奏线 7% —— 试点落地是关键</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel rv d6">
+        <h5>本季回款榜 · 合计 ¥215,000</h5>
+        <div class="lb-row top"><span class="lb-rank">1</span><span class="ava" data-ava="laokang"></span><span class="lb-name">老康</span><div class="lb-bar"><i style="--w:90%;--lb:#c2882f"></i></div><span class="lb-amt">¥98,000</span></div>
+        <div class="lb-row"><span class="lb-rank">2</span><span class="ava" data-ava="ayan"></span><span class="lb-name">阿妍</span><div class="lb-bar"><i style="--w:70%;--lb:#e0a23c"></i></div><span class="lb-amt">¥76,000</span></div>
+        <div class="lb-row"><span class="lb-rank">3</span><span class="ava" data-ava="dapeng"></span><span class="lb-name">大鹏</span><div class="lb-bar"><i style="--w:38%;--lb:#ecc27a"></i></div><span class="lb-amt">¥41,000</span></div>
+        <div class="fd-item" style="margin-top:8px"><i class="dot" style="background:var(--mkt)"></i><span>大鹏主攻渠道，星辰机械交接后<b>下季有望冲榜</b></span></div>
+      </div>
+    </div>
   </section>
 
   <!-- ================= 广告营销部 ================= -->
@@ -576,6 +724,27 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
         <div class="ok-item"><span class="okc"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.5 5 9 9.5 3.5" stroke="#047857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>本周 18 条线索已转市场部 · Agent 自动去重、带来源</div>
         <div class="ok-item"><span class="okc"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.5 5 9 9.5 3.5" stroke="#047857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>试点城市素材包已交付（老康确认收到）</div>
         <div class="ok-item"><span class="okc"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.5 5 9 9.5 3.5" stroke="#047857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>成交客户的素材偏好，已回流到素材库标签</div>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="panel rv d6">
+        <h5>本周爆款 Top 3</h5>
+        <div class="top-item n1"><span class="tp-rank">1</span><div class="tp-body"><b>工厂实拍 · 一台机器的一天</b><span>小红书 · 桃子 · 周三发布</span></div><span class="tp-num">2.4w 曝光<br>9 留资</span></div>
+        <div class="top-item"><span class="tp-rank">2</span><div class="tp-body"><b>客户案例 · 星辰机械提效 40%</b><span>抖音 · 阿飞 · 周二发布</span></div><span class="tp-num">1.8w 曝光<br>6 留资</span></div>
+        <div class="top-item"><span class="tp-rank">3</span><div class="tp-body"><b>老板讲透：AI 怎么进工厂</b><span>视频号 · 阿坤 · 周一发布</span></div><span class="tp-num">0.9w 曝光<br>3 留资</span></div>
+      </div>
+      <div class="panel rv d6">
+        <h5>内容日历 · 本周（已发 10 · 计划 3）</h5>
+        <div class="cal">
+          <div class="cd"><b>周一</b><div class="dots"><i style="background:var(--ad)" title="小红书"></i><i style="background:#8fb29b" title="视频号"></i></div></div>
+          <div class="cd"><b>周二</b><div class="dots"><i style="background:#26221f" title="抖音"></i><i style="background:#c9a24b" title="公众号"></i></div></div>
+          <div class="cd"><b>周三</b><div class="dots"><i style="background:var(--ad)" title="小红书"></i></div></div>
+          <div class="cd today"><b>周四</b><div class="dots"><i style="background:var(--ad)" title="小红书"></i><i style="background:#26221f" title="抖音"></i><i style="background:#8fb29b" title="视频号"></i></div></div>
+          <div class="cd"><b>周五</b><div class="dots"><i style="background:var(--ad)" title="小红书"></i><i style="background:#26221f" title="抖音"></i></div></div>
+          <div class="cd plan"><b>周六</b><div class="dots"><i style="background:var(--ad)" title="小红书 · 计划"></i></div></div>
+          <div class="cd plan"><b>周日</b><div class="dots"><i style="background:var(--ad)" title="小红书 · 计划"></i><i style="background:#c9a24b" title="公众号 · 计划"></i></div></div>
+        </div>
+        <p class="cal-foot">已发：小红书 ×4 · 抖音 ×3 · 视频号 ×2 · 公众号 ×1 —— 虚线格为计划中</p>
       </div>
     </div>
   </section>

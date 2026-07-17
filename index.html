@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>办公软件 + Agent · 让协作长出记忆</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THEME — loci design language
+   warm paper bg · emerald accent · serif display · mono labels
+   ============================================================ */
+:root{
+  --bg:#f6f6f4; --surface:#ffffff; --surface-2:#fafafa; --surface-3:#f5f5f3;
+  --ink:#1c1c1a; --ink-2:#5b5b57; --ink-3:#9a9a94; --ink-4:#c4c4be;
+  --line:#ececea; --line-2:#e3e3e0;
+  --accent:#10b981; --accent-2:#34d399; --accent-weak:#d9f5e9; --accent-ink:#047857;
+  --mint:#eaf6f0;
+  /* department palette (from loci category colors) */
+  --dev:#5b86d6;  --dev-weak:#e6edf9;
+  --prod:#9b7ed0; --prod-weak:#efe9f9;
+  --mkt:#e0a23c;  --mkt-weak:#f7efdf;
+  --ad:#e8836b;   --ad-weak:#fbe9e3;
+  --bad:#e0574f;  --bad-weak:#fdecea;
+  --shadow-sm:0 1px 2px rgba(20,20,18,.04),0 1px 3px rgba(20,20,18,.03);
+  --shadow:0 1px 2px rgba(20,20,18,.04),0 4px 12px rgba(20,20,18,.05),0 12px 28px rgba(20,20,18,.04);
+  --shadow-lg:0 2px 4px rgba(20,20,18,.04),0 8px 24px rgba(20,20,18,.06),0 24px 56px rgba(20,20,18,.06);
+  --serif:'Fraunces','Noto Serif SC','Songti SC',serif;
+  --sans:'Inter','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Menlo,'PingFang SC',monospace;
+  --ease-out-expo:cubic-bezier(.16,1,.3,1);
+  --ease-out-back:cubic-bezier(.34,1.56,.64,1);
+  --title-size:clamp(2.6rem,5.6vw,5rem);
+  --h2-size:clamp(1.7rem,3.4vw,2.9rem);
+  --h3-size:clamp(1.05rem,1.8vw,1.45rem);
+  --body-size:clamp(.95rem,1.4vw,1.15rem);
+  --small-size:clamp(.78rem,1.05vw,.95rem);
+  --slide-padding:clamp(1.2rem,4vw,4rem);
+  --content-gap:clamp(.7rem,2vw,2rem);
+  --element-gap:clamp(.3rem,1vw,1rem);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+/* ============================================================
+   VIEWPORT FITTING — mandatory base
+   ============================================================ */
+/* Deck navigation is fully JS-driven: #deck is the only scroll container,
+   Deck.go() animates its scrollTop via rAF (scroll-snap + smooth
+   scroll-behavior cancel programmatic scrolls in Chromium). */
+html,body{height:100%;overflow:hidden}
+#deck{height:100vh;height:100dvh;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+#deck::-webkit-scrollbar{display:none}
+body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
+  font-family:var(--sans);background:var(--bg);color:var(--ink)}
+.slide{width:100vw;height:100vh;height:100dvh;overflow:hidden;scroll-snap-align:start;
+  display:flex;flex-direction:column;position:relative}
+.slide-content{flex:1;display:flex;flex-direction:column;justify-content:center;
+  max-height:100%;overflow:hidden;padding:var(--slide-padding)}
+.card,.container,.content-box{max-width:min(90vw,1000px);max-height:min(80vh,700px)}
+img{max-width:100%;max-height:min(50vh,400px);object-fit:contain}
+:lang(zh){line-height:1.6;overflow-wrap:break-word}
+h1,h2,h3,h4{overflow-wrap:break-word}
+p,li,blockquote{overflow-wrap:break-word}
+@media (max-height:700px){:root{--slide-padding:clamp(.75rem,3vw,2rem);--content-gap:clamp(.4rem,1.5vw,1rem);
+  --title-size:clamp(1.5rem,4.5vw,2.6rem);--h2-size:clamp(1.1rem,3vw,1.8rem)}}
+@media (max-height:600px){:root{--slide-padding:clamp(.5rem,2.5vw,1.5rem);--body-size:clamp(.7rem,1.2vw,.95rem)}
+  .nav-dots,.kbd-hint{display:none}}
+@media (max-height:500px){:root{--title-size:clamp(1rem,3.5vw,1.5rem);--h2-size:clamp(.9rem,2.5vw,1.25rem)}}
+@media (max-width:600px){.slide-counter{display:none}}
+@media (min-width:2000px){.slide-content{max-width:1700px;margin:0 auto}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.2s!important;scroll-behavior:auto!important}
+  html{scroll-behavior:auto;scroll-snap-type:none}
+  .rv,.rv-pop,.rv-l,.rv-r{opacity:0;transform:none!important;transition:opacity .2s ease!important}
+  .visible .rv,.visible .rv-pop,.visible .rv-l,.visible .rv-r{opacity:1}}
+@media print{html,body{overflow:visible;height:auto}
+  #deck{overflow:visible;height:auto}
+  .slide{height:auto;min-height:100vh;overflow:visible;page-break-after:always}
+  .progress-bar,.nav-dots,.slide-counter,.kbd-hint,.autoplay-btn{display:none!important}
+  .rv,.rv-pop,.rv-l,.rv-r{opacity:1!important;transform:none!important}
+  .msg{max-height:none!important;opacity:1!important;transform:none!important;margin-top:8px!important}
+  .msg.typing{display:none!important}
+  .task-row[data-t]{opacity:1!important;transform:none!important}
+  .stamp{opacity:.92!important;transform:scale(1) rotate(-8deg)!important}
+  .meet-src .rec{opacity:1!important}}
+/* ============================================================
+   REVEALS — staggered entrances triggered by .visible
+   ============================================================ */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .65s var(--ease-out-expo),transform .65s var(--ease-out-expo)}
+.visible .rv{opacity:1;transform:translateY(0)}
+.rv-pop{opacity:0;transform:scale(.7) rotate(-4deg);transition:opacity .4s ease,transform .55s var(--ease-out-back)}
+.visible .rv-pop{opacity:1;transform:scale(1) rotate(0)}
+.rv-l{opacity:0;transform:translateX(-40px);transition:opacity .6s ease,transform .6s var(--ease-out-expo)}
+.visible .rv-l{opacity:1;transform:translateX(0)}
+.rv-r{opacity:0;transform:translateX(40px);transition:opacity .6s ease,transform .6s var(--ease-out-expo)}
+.visible .rv-r{opacity:1;transform:translateX(0)}
+.d1{transition-delay:.08s}.d2{transition-delay:.18s}.d3{transition-delay:.28s}.d4{transition-delay:.38s}
+.d5{transition-delay:.48s}.d6{transition-delay:.58s}.d7{transition-delay:.7s}.d8{transition-delay:.85s}
+/* ============================================================
+   CHROME — progress bar, dots, counter, hints
+   ============================================================ */
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent-ink),var(--accent));
+  width:0%;z-index:9999;transition:width .35s ease;border-radius:0 99px 99px 0}
+.nav-dots{position:fixed;right:clamp(10px,1.6vw,22px);top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:8px;z-index:9998}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--ink-4);border:none;cursor:pointer;
+  transition:all .3s ease;padding:0}
+.nav-dot.active{background:var(--accent);transform:scale(1.45);box-shadow:0 0 0 4px var(--accent-weak)}
+.slide-counter{position:fixed;bottom:clamp(10px,1.8vw,22px);right:clamp(12px,2vw,26px);
+  font-family:var(--mono);font-size:var(--small-size);color:var(--ink-3);z-index:9998}
+.kbd-hint{position:fixed;bottom:clamp(10px,1.8vw,22px);left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:clamp(.62rem,.9vw,.8rem);color:var(--ink-3);z-index:9998;
+  background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 14px;
+  box-shadow:var(--shadow-sm);transition:opacity 1s ease}
+.kbd-hint.faded{opacity:0;pointer-events:none}
+.autoplay-btn{position:fixed;bottom:clamp(10px,1.8vw,22px);left:clamp(12px,2vw,26px);z-index:9998;
+  font-family:var(--mono);font-size:clamp(.62rem,.9vw,.8rem);color:var(--ink-2);cursor:pointer;
+  background:var(--surface);border:1px solid var(--line-2);border-radius:999px;padding:5px 13px;
+  display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-sm);transition:all .2s ease}
+.autoplay-btn:hover{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-weak)}
+.autoplay-btn.on{background:var(--accent-weak);border-color:var(--accent);color:var(--accent-ink)}
+.autoplay-btn .ap-dot{width:7px;height:7px;border-radius:50%;background:var(--ink-4)}
+.autoplay-btn.on .ap-dot{background:var(--accent);animation:pulse 1.4s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}60%{box-shadow:0 0 0 6px rgba(16,185,129,0)}}
+/* ============================================================
+   SHARED COMPONENTS
+   ============================================================ */
+.eyebrow{font-family:var(--mono);font-size:clamp(.68rem,1vw,.85rem);font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent-ink);display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';width:22px;height:2px;background:var(--accent);border-radius:2px}
+.h-serif{font-family:var(--serif);font-weight:700;letter-spacing:-0.015em;line-height:1.18}
+.pill{font-family:var(--mono);font-size:clamp(.6rem,.85vw,.78rem);color:var(--ink-2);background:var(--surface-2);
+  border:1px solid var(--line);padding:2px 9px;border-radius:999px;white-space:nowrap}
+.ava{display:inline-block;line-height:0}
+.ava svg{width:100%;height:100%;display:block}
+.breath{animation:breath 3.6s ease-in-out infinite}
+@keyframes breath{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes wob{0%,100%{transform:translate(-50%,-50%) rotate(0)}50%{transform:translate(-50%,calc(-50% - 6px)) rotate(-.8deg)}}
+@keyframes dashflow{to{stroke-dashoffset:-16}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+/* ============================================================
+   S1 — COVER
+   ============================================================ */
+.s-cover .slide-content{align-items:center;text-align:center;position:relative}
+.cover-bg{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 62% 48% at 50% 38%,rgba(16,185,129,.09) 0%,transparent 70%),
+             radial-gradient(ellipse 30% 30% at 12% 85%,rgba(224,162,60,.06) 0%,transparent 70%),
+             radial-gradient(ellipse 30% 30% at 88% 80%,rgba(91,134,214,.06) 0%,transparent 70%)}
+.cover-brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:clamp(.7rem,1vw,.9rem);
+  font-weight:600;letter-spacing:.22em;color:var(--ink-2)}
+.cover-brand .logo-dot{width:clamp(26px,2.6vw,34px);height:clamp(26px,2.6vw,34px)}
+.cover-title{font-size:var(--title-size);margin-top:clamp(.8rem,2.4vh,1.6rem)}
+.cover-title .em{color:var(--accent-ink);font-style:italic;position:relative;white-space:nowrap}
+.cover-title .em::after{content:'';position:absolute;left:2%;right:2%;bottom:.04em;height:.14em;
+  background:var(--accent-weak);z-index:-1;border-radius:4px;transform:scaleX(0);transform-origin:left;
+  transition:transform .9s var(--ease-out-expo) .9s}
+.visible .cover-title .em::after{transform:scaleX(1)}
+.cover-sub{font-size:clamp(.95rem,1.7vw,1.3rem);color:var(--ink-2);margin-top:clamp(.8rem,2.2vh,1.4rem);
+  max-width:min(84vw,660px);line-height:1.9}
+.cover-chips{display:flex;gap:clamp(8px,1.2vw,14px);margin-top:clamp(1rem,3vh,2rem);flex-wrap:wrap;justify-content:center}
+.cover-chip{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line-2);
+  border-radius:999px;padding:7px 15px;font-size:clamp(.75rem,1.1vw,.92rem);font-weight:500;color:var(--ink-2);
+  box-shadow:var(--shadow-sm)}
+.cover-chip svg{width:15px;height:15px}
+.cover-cast{display:flex;margin-top:clamp(1.2rem,3.4vh,2.4rem)}
+.cover-cast .ava{width:clamp(38px,4vw,52px);height:clamp(38px,4vw,52px);border-radius:50%;overflow:hidden;
+  border:2.5px solid var(--surface);box-shadow:var(--shadow-sm);margin-left:-10px;background:var(--mint)}
+.cover-cast .ava:first-child{margin-left:0}
+.cover-cast .cast-agent{width:clamp(44px,4.6vw,60px);height:clamp(44px,4.6vw,60px);margin-left:-10px;z-index:2;
+  border-radius:50%;border:2.5px solid var(--surface);background:var(--accent-weak);box-shadow:0 4px 14px rgba(16,185,129,.3);overflow:hidden}
+.cover-float{position:absolute;font-family:var(--mono);font-size:clamp(.58rem,.85vw,.78rem);color:var(--ink-2);
+  background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:6px 11px;
+  box-shadow:var(--shadow);display:flex;gap:6px;align-items:center;animation:floaty 5s ease-in-out infinite}
+.cover-float svg{width:13px;height:13px}
+/* ============================================================
+   S2 — POSITIONING (big statement)
+   ============================================================ */
+.s-pos .slide-content{align-items:center;text-align:center}
+.pos-title{font-size:clamp(2rem,4.6vw,4rem);line-height:1.3;max-width:min(92vw,900px)}
+.pos-title .neg{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--bad);
+  text-decoration-thickness:.06em}
+.pos-title .em{color:var(--accent-ink)}
+.pos-formula{display:flex;align-items:center;gap:clamp(10px,2vw,22px);margin-top:clamp(1.4rem,4vh,2.6rem);
+  font-family:var(--serif);font-size:clamp(1.1rem,2.2vw,1.7rem);font-weight:600}
+.pos-formula .f-box{background:var(--surface);border:1px solid var(--line-2);border-radius:16px;
+  padding:clamp(.5rem,1.4vh,.9rem) clamp(1rem,2.2vw,1.8rem);box-shadow:var(--shadow-sm)}
+.pos-formula .f-box.green{background:var(--accent-weak);border-color:rgba(16,185,129,.35);color:var(--accent-ink)}
+.pos-formula .f-op{color:var(--ink-3);font-size:1.2em}
+.pos-notes{display:flex;gap:clamp(10px,1.6vw,18px);margin-top:clamp(1.4rem,4vh,2.6rem);flex-wrap:wrap;justify-content:center}
+.pos-note{background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:clamp(.7rem,1.6vh,1rem) clamp(.9rem,1.8vw,1.3rem);text-align:left;max-width:240px;box-shadow:var(--shadow-sm)}
+.pos-note b{display:block;font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink);margin-bottom:3px}
+.pos-note span{font-size:clamp(.72rem,1.05vw,.88rem);color:var(--ink-3);line-height:1.55;display:block}
+/* ============================================================
+   S3 — CAST (departments)
+   ============================================================ */
+.cast-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(9px,1.4vw,18px);
+  margin-top:var(--content-gap);align-items:stretch}
+@media (max-width:900px){.cast-grid{grid-template-columns:repeat(2,1fr)}}
+.dept-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;
+  box-shadow:var(--shadow-sm);transition:transform .3s var(--ease-out-back),box-shadow .3s ease;display:flex;flex-direction:column}
+.dept-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.dept-head{padding:clamp(.6rem,1.4vh,.9rem) clamp(.7rem,1.2vw,1rem) clamp(.45rem,1vh,.7rem);
+  display:flex;align-items:center;gap:9px;border-bottom:1px dashed var(--line-2)}
+.dept-head .ava{width:clamp(34px,3.4vw,46px);height:clamp(34px,3.4vw,46px);border-radius:13px;overflow:hidden;flex:none}
+.dept-head b{font-size:clamp(.82rem,1.2vw,1.02rem);display:block;line-height:1.25}
+.dept-head span{font-family:var(--mono);font-size:clamp(.56rem,.8vw,.72rem);color:var(--ink-3)}
+.dept-members{padding:clamp(.5rem,1.2vh,.8rem) clamp(.7rem,1.2vw,1rem);display:flex;flex-direction:column;
+  gap:clamp(4px,.8vh,7px);flex:1}
+.mem{display:flex;align-items:center;gap:8px}
+.mem .ava{width:clamp(24px,2.4vw,32px);height:clamp(24px,2.4vw,32px);border-radius:50%;overflow:hidden;flex:none}
+.mem span{font-size:clamp(.7rem,1vw,.86rem);color:var(--ink-2)}
+.mem .pill{margin-left:auto}
+.dept-bar{height:4px}
+.cast-boss{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:var(--content-gap)}
+.cast-boss .ava{width:clamp(40px,4vw,54px);height:clamp(40px,4vw,54px);border-radius:50%;overflow:hidden}
+.cast-boss p{font-size:clamp(.8rem,1.2vw,1rem);color:var(--ink-2)}
+.cast-boss b{color:var(--ink)}
+/* ============================================================
+   S4 — PAIN POINTS + repeated-question chat loop
+   ============================================================ */
+.two-col{flex-direction:row;align-items:center;gap:clamp(1.2rem,3.4vw,3.4rem)}
+@media (max-width:820px){.two-col{flex-direction:column;justify-content:center}}
+.col-txt{flex:1.06;min-width:0}
+.col-fig{flex:1;min-width:0;display:flex;justify-content:center;align-items:center}
+.pain-list{display:flex;flex-direction:column;gap:clamp(.6rem,1.6vh,1rem);margin-top:var(--content-gap)}
+.pain-item{display:flex;gap:13px;background:var(--surface);border:1px solid var(--line);border-radius:16px;
+  padding:clamp(.65rem,1.6vh,1rem) clamp(.8rem,1.5vw,1.2rem);box-shadow:var(--shadow-sm);align-items:flex-start}
+.pain-item .p-num{font-family:var(--serif);font-style:italic;font-weight:600;color:var(--bad);
+  font-size:clamp(1.1rem,1.8vw,1.5rem);line-height:1.1;flex:none;opacity:.85}
+.pain-item b{font-size:clamp(.9rem,1.35vw,1.1rem);display:block;margin-bottom:2px}
+.pain-item span{font-size:clamp(.74rem,1.1vw,.92rem);color:var(--ink-3);line-height:1.6;display:block}
+/* chat mock (shared) */
+.chat{width:100%;max-width:min(78vw,420px);background:var(--surface);border:1px solid var(--line-2);
+  border-radius:22px;box-shadow:var(--shadow-lg);overflow:hidden;display:flex;flex-direction:column}
+.chat-hd{padding:10px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px;
+  background:var(--surface-2)}
+.chat-hd .c-dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.chat-hd b{font-size:clamp(.76rem,1.1vw,.92rem)}
+.chat-hd span{font-family:var(--mono);font-size:clamp(.56rem,.8vw,.7rem);color:var(--ink-3);margin-left:auto}
+.chat-bd{padding:clamp(10px,1.6vh,16px) clamp(12px,1.4vw,18px);display:flex;flex-direction:column;
+  justify-content:flex-end;overflow:hidden;gap:0}
+.msg{display:flex;gap:8px;align-items:flex-end;max-height:0;opacity:0;transform:translateY(12px);
+  transition:max-height .45s var(--ease-out-expo),opacity .4s ease,transform .45s var(--ease-out-back),margin .45s ease;
+  margin-top:0}
+.msg.on{max-height:150px;opacity:1;transform:translateY(0);margin-top:clamp(7px,1.2vh,11px)}
+.msg.big.on{max-height:420px} /* tall bubbles (e.g. handover card) need more room */
+.msg.off{opacity:0;max-height:0;margin-top:0}
+.msg .ava{width:clamp(24px,2.2vw,30px);height:clamp(24px,2.2vw,30px);border-radius:50%;overflow:hidden;flex:none}
+.msg .m-body{max-width:82%}
+.msg .m-meta{font-family:var(--mono);font-size:clamp(.54rem,.78vw,.68rem);color:var(--ink-3);margin:0 0 3px 4px;
+  display:flex;gap:6px}
+.msg .bubble{background:var(--surface-3);border:1px solid var(--line);border-radius:4px 14px 14px 14px;
+  padding:7px 12px;font-size:clamp(.72rem,1.05vw,.9rem);line-height:1.55;color:var(--ink)}
+.msg.me{flex-direction:row-reverse}
+.msg.me .bubble{background:var(--accent-weak);border-color:rgba(16,185,129,.25);border-radius:14px 4px 14px 14px}
+.msg.me .m-meta{justify-content:flex-end;margin:0 4px 3px 0}
+.msg.agent .bubble{background:linear-gradient(160deg,#effaf5,#e2f6ec);border-color:rgba(16,185,129,.35)}
+.msg.agent .m-meta .who{color:var(--accent-ink);font-weight:600}
+.msg .bubble .tag-line{display:block;margin-top:6px;padding-top:6px;border-top:1px dashed rgba(16,185,129,.3);
+  font-family:var(--mono);font-size:clamp(.54rem,.8vw,.7rem);color:var(--accent-ink)}
+.msg.sys{justify-content:center}
+.msg.sys .bubble{background:none;border:none;font-family:var(--mono);color:var(--ink-4);
+  font-size:clamp(.56rem,.8vw,.7rem);padding:2px}
+/* file card inside bubble */
+.filecard{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line-2);
+  border-radius:11px;padding:8px 11px;min-width:170px;box-shadow:var(--shadow-sm)}
+.filecard .f-ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex:none}
+.filecard .f-ico svg{width:16px;height:16px}
+.filecard b{font-size:clamp(.66rem,.95vw,.82rem);display:block;line-height:1.3}
+.filecard span{font-family:var(--mono);font-size:clamp(.5rem,.72vw,.64rem);color:var(--ink-3)}
+/* typing dots */
+.typing .bubble{display:flex;gap:4px;align-items:center;padding:10px 14px}
+.typing .t-dot{width:6px;height:6px;border-radius:50%;background:var(--ink-4);animation:tb 1s ease infinite}
+.typing .t-dot:nth-child(2){animation-delay:.15s}.typing .t-dot:nth-child(3){animation-delay:.3s}
+@keyframes tb{0%,100%{transform:translateY(0);opacity:.5}40%{transform:translateY(-4px);opacity:1}}
+.sigh{font-family:var(--mono);font-size:clamp(.6rem,.85vw,.75rem);color:var(--bad);background:var(--bad-weak);
+  border:1px solid rgba(224,87,79,.25);border-radius:999px;padding:3px 10px;display:inline-block}
+.cheer{font-family:var(--mono);font-size:clamp(.6rem,.85vw,.75rem);color:var(--accent-ink);background:var(--accent-weak);
+  border:1px solid rgba(16,185,129,.3);border-radius:999px;padding:3px 10px;display:inline-block}
+/* client handover card inside an agent bubble (scene 5) */
+.client-card{background:var(--surface);border:1px solid var(--line-2);border-radius:11px;
+  padding:9px 12px;margin-bottom:6px;box-shadow:var(--shadow-sm)}
+.client-card b{font-size:clamp(.68rem,1vw,.84rem);display:block;margin-bottom:5px}
+.cc-row{font-size:clamp(.62rem,.92vw,.78rem);color:var(--ink-2);display:flex;gap:7px;align-items:center;padding:2.5px 0}
+.cc-row i{width:5px;height:5px;border-radius:50%;background:var(--accent);flex:none}
+/* pain slide: 3 rotating demos synced with the pain cards */
+.pain-item{cursor:pointer;transition:transform .35s var(--ease-out-back),box-shadow .3s ease,border-color .3s ease}
+.pain-item.act{border-color:rgba(224,87,79,.45);box-shadow:var(--shadow);transform:translateX(7px)}
+.pain-item .p-hint{font-family:var(--mono);font-size:clamp(.52rem,.75vw,.66rem);color:var(--ink-4);
+  margin-top:4px;display:block;transition:color .3s ease}
+.pain-item.act .p-hint{color:var(--bad)}
+.pain-demos{position:relative;width:100%;max-width:min(78vw,420px);height:clamp(320px,56vh,460px)}
+.pain-demos .chat{position:absolute;inset:0;max-width:none;opacity:0;transform:scale(.985) translateY(8px);
+  pointer-events:none;transition:opacity .45s ease,transform .55s var(--ease-out-expo)}
+.pain-demos .chat.act{opacity:1;transform:none;pointer-events:auto}
+.pain-demos .chat .chat-bd{flex:1;height:auto}
+/* ============================================================
+   S5 — ORG CHART before/after  &  S10 — DATA FLOW (stages)
+   ============================================================ */
+.stage-slide .slide-content{justify-content:flex-start;padding-top:clamp(1rem,3vh,2.2rem)}
+.stage-top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.stage-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;margin-top:clamp(.4rem,1.4vh,1rem)}
+.stage{position:relative;container-type:inline-size;
+  width:min(1200px,96vw,calc((100dvh - 205px)*1.9));aspect-ratio:1000/540}
+.stage svg.wires{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;
+  gap:.5cqw;z-index:3}
+.node .ava{border-radius:50%;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-sm);
+  border:.22cqw solid var(--surface)}
+.node .n-name{font-size:1.35cqw;font-weight:600;color:var(--ink);line-height:1.2;background:rgba(246,246,244,.85);
+  padding:0 .5cqw;border-radius:.6cqw}
+.node .n-role{font-family:var(--mono);font-size:.95cqw;color:var(--ink-3);line-height:1.1}
+.node.head .ava{width:6.4cqw;height:6.4cqw;border-radius:1.8cqw}
+.node.mem .ava{width:4.6cqw;height:4.6cqw}
+.node.boss .ava{width:7cqw;height:7cqw;border-radius:2cqw}
+.org-toggle{display:flex;background:var(--surface);border:1px solid var(--line-2);border-radius:999px;
+  padding:4px;gap:4px;box-shadow:var(--shadow-sm)}
+.org-toggle button{font-family:var(--sans);font-size:clamp(.74rem,1.1vw,.92rem);font-weight:600;border:none;
+  background:none;color:var(--ink-3);padding:7px 18px;border-radius:999px;cursor:pointer;transition:all .25s ease;
+  display:flex;align-items:center;gap:7px}
+.org-toggle button .tg-dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.55}
+.org-toggle button.act-bad{background:var(--bad-weak);color:#b3423b}
+.org-toggle button.act-good{background:var(--accent-weak);color:var(--accent-ink)}
+.org-layer{position:absolute;inset:0;transition:opacity .7s ease,transform .7s var(--ease-out-expo)}
+.org-layer.hidden-layer{opacity:0;transform:scale(.985);pointer-events:none}
+.chaos-chip{position:absolute;transform:translate(-50%,-50%);font-family:var(--mono);font-size:1.05cqw;
+  color:#b3423b;background:var(--bad-weak);border:1px solid rgba(224,87,79,.3);border-radius:.9cqw;
+  padding:.45cqw 1cqw;z-index:4;animation:wob 3.2s ease-in-out infinite;white-space:nowrap;box-shadow:var(--shadow-sm)}
+.good-chip{position:absolute;transform:translate(-50%,-50%);font-family:var(--mono);font-size:1.05cqw;
+  color:var(--accent-ink);background:var(--accent-weak);border:1px solid rgba(16,185,129,.35);border-radius:.9cqw;
+  padding:.45cqw 1cqw;z-index:4;white-space:nowrap;box-shadow:var(--shadow-sm)}
+.hub{position:absolute;transform:translate(-50%,-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:.5cqw}
+.hub .hub-core{width:9.4cqw;height:9.4cqw;position:relative}
+.hub .hub-ring{position:absolute;inset:-1.6cqw;border-radius:50%;border:.18cqw dashed rgba(16,185,129,.5);
+  animation:spin 22s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hub .n-name{font-size:1.35cqw;font-weight:700;color:var(--accent-ink)}
+.org-stats{display:flex;gap:clamp(8px,1.4vw,16px);justify-content:center;margin-top:clamp(.4rem,1.2vh,.9rem);flex-wrap:wrap}
+.org-stat{font-family:var(--mono);font-size:clamp(.62rem,.95vw,.82rem);border-radius:999px;padding:5px 14px;
+  border:1px solid;transition:all .5s ease}
+.org-stat.bad-s{color:#b3423b;background:var(--bad-weak);border-color:rgba(224,87,79,.25)}
+.org-stat.good-s{color:var(--accent-ink);background:var(--accent-weak);border-color:rgba(16,185,129,.3)}
+/* data flow */
+.flow-card{position:absolute;transform:translate(-50%,-50%);background:var(--surface);border:1px solid var(--line-2);
+  border-radius:1.4cqw;box-shadow:var(--shadow-sm);padding:.9cqw 1.3cqw;display:flex;align-items:center;gap:.9cqw;z-index:3}
+.flow-card .fc-ico{width:3cqw;height:3cqw;border-radius:.9cqw;display:grid;place-items:center;flex:none}
+.flow-card .fc-ico svg{width:1.6cqw;height:1.6cqw}
+.flow-card b{font-size:1.35cqw;display:block;line-height:1.3}
+.flow-card span{font-family:var(--mono);font-size:.9cqw;color:var(--ink-3);display:block}
+.col-label{position:absolute;transform:translate(-50%,-50%);font-family:var(--mono);font-size:1.1cqw;
+  letter-spacing:.18em;color:var(--ink-3);z-index:3}
+.bank{position:absolute;transform:translate(-50%,-50%);width:23cqw;background:var(--surface);
+  border:1px solid var(--line-2);border-radius:1.6cqw;box-shadow:var(--shadow);padding:1.2cqw 1.3cqw;z-index:3}
+.bank .bank-title{font-family:var(--serif);font-weight:700;font-size:1.7cqw;display:flex;align-items:center;
+  gap:.7cqw;margin-bottom:.9cqw}
+.bank .bank-title svg{width:1.7cqw;height:1.7cqw}
+.shelf{display:flex;align-items:center;gap:.7cqw;padding:.62cqw .5cqw;border-top:1px dashed var(--line)}
+.shelf .sh-dot{width:.9cqw;height:.9cqw;border-radius:.3cqw;flex:none}
+.shelf b{font-size:1.2cqw;font-weight:600;color:var(--ink-2);width:7.2cqw;flex:none}
+.shelf .sh-split{flex:1;display:flex;height:1.75cqw;border-radius:.5cqw;overflow:hidden;
+  font-family:var(--mono);font-size:.82cqw;line-height:1.75cqw;text-align:center}
+.shelf .sh-in{background:var(--surface-3);color:var(--ink-3);flex:1}
+.shelf .sh-share{background:var(--accent-weak);color:var(--accent-ink);flex:1.25}
+/* ============================================================
+   S6-S9 — SCENARIO SLIDES
+   ============================================================ */
+.scene-eyebrow{display:flex;align-items:center;gap:12px}
+.scene-eyebrow .sc-num{font-family:var(--serif);font-style:italic;font-weight:600;
+  font-size:clamp(1.6rem,3vw,2.6rem);color:var(--accent);line-height:1;opacity:.9}
+.scene-title{font-size:var(--h2-size);margin-top:clamp(.5rem,1.4vh,.9rem)}
+.scene-points{margin-top:var(--content-gap);display:flex;flex-direction:column;gap:clamp(.55rem,1.5vh,.95rem);
+  list-style:none;padding:0}
+.scene-points li{display:flex;gap:11px;align-items:flex-start;font-size:clamp(.86rem,1.3vw,1.08rem);
+  color:var(--ink-2);line-height:1.65}
+.scene-points li b{color:var(--ink)}
+.scene-points .pt-ico{flex:none;width:clamp(20px,1.8vw,26px);height:clamp(20px,1.8vw,26px);border-radius:8px;
+  background:var(--accent-weak);display:grid;place-items:center;margin-top:2px}
+.scene-points .pt-ico svg{width:60%;height:60%}
+/* todo board (S7) */
+.board{width:100%;max-width:min(78vw,430px);background:var(--surface);border:1px solid var(--line-2);
+  border-radius:22px;box-shadow:var(--shadow-lg);padding:clamp(12px,1.8vh,18px) clamp(14px,1.6vw,20px)}
+.board-hd{display:flex;align-items:center;gap:9px;margin-bottom:clamp(8px,1.4vh,13px)}
+.board-hd b{font-size:clamp(.82rem,1.2vw,1rem)}
+.board-hd .pill{margin-left:auto}
+.board-prog{height:7px;background:var(--surface-3);border-radius:99px;overflow:hidden;margin-bottom:clamp(9px,1.5vh,14px)}
+.board-prog i{display:block;height:100%;width:20%;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent-2),var(--accent));transition:width .8s var(--ease-out-expo)}
+.todo{display:flex;align-items:center;gap:10px;padding:clamp(6px,1.1vh,9px) 4px;border-top:1px dashed var(--line)}
+.todo .td-box{width:clamp(16px,1.5vw,20px);height:clamp(16px,1.5vw,20px);border-radius:6px;
+  border:1.8px solid var(--ink-4);flex:none;display:grid;place-items:center;transition:all .3s ease;background:var(--surface)}
+.todo .td-box svg{width:70%;height:70%;stroke-dasharray:16;stroke-dashoffset:16;transition:stroke-dashoffset .45s ease .1s}
+.todo.done .td-box{background:var(--accent);border-color:var(--accent)}
+.todo.done .td-box svg{stroke-dashoffset:0}
+.todo p{font-size:clamp(.74rem,1.1vw,.92rem);color:var(--ink);flex:1;transition:color .3s ease}
+.todo.done p{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--ink-4)}
+.todo .ava{width:clamp(20px,1.9vw,26px);height:clamp(20px,1.9vw,26px);border-radius:50%;overflow:hidden;flex:none}
+.todo{opacity:1}
+/* meeting summary (S8) */
+.meet-wrap{display:flex;flex-direction:column;gap:clamp(10px,1.8vh,16px);width:100%;max-width:min(84vw,470px)}
+.meet-src{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--line-2);
+  border-radius:16px;padding:clamp(9px,1.4vh,13px) clamp(12px,1.5vw,17px);box-shadow:var(--shadow-sm)}
+.meet-src .m-ic{width:clamp(30px,2.8vw,38px);height:clamp(30px,2.8vw,38px);border-radius:11px;background:var(--mkt-weak);
+  display:grid;place-items:center;flex:none}
+.meet-src .m-ic svg{width:55%;height:55%}
+.meet-src b{font-size:clamp(.8rem,1.2vw,.98rem);display:block}
+.meet-src span{font-family:var(--mono);font-size:clamp(.56rem,.82vw,.72rem);color:var(--ink-3)}
+.meet-src .rec{margin-left:auto;display:flex;align-items:center;gap:5px;font-family:var(--mono);
+  font-size:clamp(.56rem,.8vw,.7rem);color:var(--bad)}
+.meet-src .rec i{width:7px;height:7px;border-radius:50%;background:var(--bad);animation:pulse 1.3s ease infinite}
+.meet-arrow{align-self:center;color:var(--accent);display:flex;flex-direction:column;align-items:center;line-height:1}
+.meet-arrow svg{width:clamp(15px,1.6vw,20px);height:clamp(15px,1.6vw,20px)}
+.meet-arrow span{font-family:var(--mono);font-size:clamp(.54rem,.8vw,.68rem);color:var(--accent-ink)}
+.minutes{background:var(--surface);border:1px solid rgba(16,185,129,.3);border-radius:20px;box-shadow:var(--shadow-lg);
+  overflow:hidden;position:relative}
+.minutes-hd{background:linear-gradient(160deg,#effaf5,#e2f6ec);padding:clamp(9px,1.4vh,13px) clamp(13px,1.6vw,18px);
+  display:flex;align-items:center;gap:9px;border-bottom:1px solid rgba(16,185,129,.2)}
+.minutes-hd .ava{width:clamp(22px,2vw,28px);height:clamp(22px,2vw,28px);flex:none}
+.minutes-hd b{font-size:clamp(.76rem,1.1vw,.94rem);color:var(--accent-ink)}
+.minutes-hd span{margin-left:auto;font-family:var(--mono);font-size:clamp(.54rem,.78vw,.68rem);color:var(--ink-3)}
+.minutes-bd{padding:clamp(10px,1.6vh,15px) clamp(13px,1.6vw,18px)}
+.minutes .mn-line{font-size:clamp(.72rem,1.05vw,.9rem);color:var(--ink-2);line-height:1.7;min-height:1.5em}
+.minutes .mn-line .caret{display:inline-block;width:2px;height:1em;background:var(--accent);vertical-align:-.15em;
+  animation:blink .8s step-end infinite;margin-left:1px}
+@keyframes blink{50%{opacity:0}}
+.task-row{display:flex;align-items:center;gap:9px;padding:clamp(5px,1vh,8px) 0;border-top:1px dashed var(--line)}
+.task-row[data-t]{opacity:0;transform:translateY(10px);transition:opacity .45s ease,transform .45s var(--ease-out-back)}
+.task-row[data-t].on{opacity:1;transform:none}
+.meet-src .rec{opacity:0;transition:opacity .35s ease}
+.meet-src .rec.on{opacity:1}
+.meet-src .rec.off{opacity:0}
+.task-row .ava{width:clamp(22px,2vw,28px);height:clamp(22px,2vw,28px);border-radius:50%;overflow:hidden;flex:none}
+.task-row b{font-size:clamp(.72rem,1.05vw,.9rem);font-weight:600}
+.task-row p{font-size:clamp(.7rem,1vw,.86rem);color:var(--ink-2);flex:1}
+.task-row .due{font-family:var(--mono);font-size:clamp(.54rem,.8vw,.7rem);color:var(--mkt);
+  background:var(--mkt-weak);padding:2px 8px;border-radius:999px;white-space:nowrap}
+.stamp{position:absolute;right:clamp(12px,1.6vw,20px);bottom:clamp(10px,1.6vh,16px);
+  font-family:var(--serif);font-weight:700;color:var(--accent-ink);border:2.5px solid var(--accent-ink);
+  border-radius:10px;padding:3px 12px;font-size:clamp(.72rem,1.1vw,.95rem);transform:scale(2.4) rotate(-14deg);
+  opacity:0;transition:transform .35s var(--ease-out-back),opacity .25s ease}
+.stamp.on{transform:scale(1) rotate(-8deg);opacity:.92}
+/* permission (S9) */
+.perm-wrap{display:flex;flex-direction:column;gap:clamp(10px,1.8vh,16px);width:100%;max-width:min(86vw,480px)}
+.perm-zones{display:grid;grid-template-columns:1fr 1fr;gap:clamp(9px,1.3vw,14px)}
+.perm-zone{border-radius:18px;padding:clamp(10px,1.6vh,15px) clamp(11px,1.4vw,15px);border:1px solid}
+.perm-zone.inner{background:var(--surface);border-color:var(--line-2)}
+.perm-zone.shared{background:linear-gradient(165deg,#effaf5,#e2f6ec);border-color:rgba(16,185,129,.3)}
+.perm-zone h4{font-size:clamp(.78rem,1.15vw,.96rem);display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.perm-zone h4 svg{width:clamp(13px,1.2vw,16px);height:clamp(13px,1.2vw,16px)}
+.perm-zone .pz-item{font-size:clamp(.68rem,1vw,.85rem);color:var(--ink-2);padding:4px 0 4px 4px;
+  display:flex;align-items:center;gap:7px}
+.perm-zone .pz-item i{width:6px;height:6px;border-radius:2px;background:var(--ink-4);flex:none}
+.perm-zone.shared .pz-item i{background:var(--accent)}
+.perm-demo{background:var(--surface);border:1px solid var(--line-2);border-radius:18px;box-shadow:var(--shadow);
+  padding:clamp(10px,1.6vh,14px) clamp(12px,1.5vw,17px)}
+.perm-req{display:flex;align-items:center;gap:9px;min-height:clamp(30px,4vh,38px)}
+.perm-req .ava{width:clamp(26px,2.4vw,32px);height:clamp(26px,2.4vw,32px);border-radius:50%;overflow:hidden;flex:none}
+.perm-req p{font-size:clamp(.72rem,1.05vw,.9rem);color:var(--ink)}
+.perm-track{position:relative;height:clamp(34px,5vh,44px);margin:6px 0 clamp(16px,2.6vh,24px)}
+.perm-track .pt-line{position:absolute;left:8%;right:8%;top:50%;height:2px;background:var(--line-2);border-radius:2px}
+.perm-track .pt-line i{position:absolute;inset:0;background:linear-gradient(90deg,var(--accent-2),var(--accent));
+  border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform 1s var(--ease-out-expo)}
+.perm-track.go .pt-line i{transform:scaleX(1)}
+.perm-track .pt-stop{position:absolute;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;
+  align-items:center;gap:3px}
+.perm-track .pt-stop .pt-ico{width:clamp(26px,2.6vw,34px);height:clamp(26px,2.6vw,34px);border-radius:50%;
+  background:var(--surface);border:1.5px solid var(--line-2);display:grid;place-items:center;z-index:2}
+.perm-track .pt-stop .pt-ico svg{width:55%;height:55%}
+.perm-track .pt-stop .pt-lbl{font-family:var(--mono);font-size:clamp(.5rem,.72vw,.62rem);color:var(--ink-3);
+  position:absolute;top:100%;margin-top:2px;white-space:nowrap}
+.perm-verdict{display:flex;align-items:center;gap:8px;font-size:clamp(.7rem,1.05vw,.88rem);min-height:1.8em;
+  font-weight:500}
+.perm-verdict .v-ok{color:var(--accent-ink)}
+.perm-verdict .v-no{color:#b3423b}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.perm-demo.deny .perm-track .pt-stop:nth-child(3) .pt-ico{animation:shake .4s ease}
+/* ============================================================
+   S11 — DAILY DIGEST
+   ============================================================ */
+.digest-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(9px,1.3vw,16px);margin-top:var(--content-gap)}
+@media (max-width:900px){.digest-grid{grid-template-columns:repeat(2,1fr)}}
+.dg-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:clamp(.7rem,1.6vh,1.1rem);
+  box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.dg-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--dc,var(--accent))}
+.dg-card h4{font-size:clamp(.8rem,1.2vw,1rem);display:flex;align-items:center;gap:7px;margin-bottom:clamp(6px,1.2vh,10px)}
+.dg-card h4 .ava{width:clamp(22px,2.1vw,28px);height:clamp(22px,2.1vw,28px);border-radius:9px;overflow:hidden}
+.dg-nums{display:flex;gap:clamp(8px,1vw,14px)}
+.dg-num b{font-family:var(--mono);font-size:clamp(1.15rem,2.1vw,1.8rem);font-weight:600;display:block;line-height:1.1}
+.dg-num span{font-family:var(--mono);font-size:clamp(.5rem,.75vw,.65rem);color:var(--ink-3);letter-spacing:.06em}
+.dg-note{margin-top:clamp(6px,1.2vh,10px);font-size:clamp(.64rem,.95vw,.8rem);color:var(--ink-3);line-height:1.55;
+  border-top:1px dashed var(--line);padding-top:clamp(5px,1vh,8px)}
+.digest-msg{margin-top:var(--content-gap);display:flex;gap:11px;align-items:flex-start;
+  max-width:min(90vw,760px)}
+.digest-msg .ava{width:clamp(30px,2.8vw,40px);height:clamp(30px,2.8vw,40px);flex:none}
+.digest-msg .bubble{background:linear-gradient(160deg,#effaf5,#e2f6ec);border:1px solid rgba(16,185,129,.3);
+  border-radius:4px 16px 16px 16px;padding:clamp(9px,1.4vh,13px) clamp(12px,1.5vw,17px);
+  font-size:clamp(.78rem,1.15vw,.98rem);line-height:1.75;color:var(--ink);box-shadow:var(--shadow-sm)}
+.digest-msg .bubble b{color:var(--accent-ink)}
+/* ============================================================
+   S12 — VALUE  ·  S13 — CLOSING
+   ============================================================ */
+.value-rows{display:flex;flex-direction:column;gap:clamp(.8rem,2.2vh,1.5rem);margin-top:var(--content-gap);
+  max-width:min(92vw,860px)}
+.value-row{display:flex;align-items:baseline;gap:clamp(12px,2vw,26px);padding-bottom:clamp(.8rem,2.2vh,1.5rem);
+  border-bottom:1px solid var(--line)}
+.value-row:last-child{border-bottom:none}
+.value-row .v-k{font-family:var(--serif);font-style:italic;font-weight:600;color:var(--accent);
+  font-size:clamp(1.2rem,2.2vw,1.9rem);flex:none;width:clamp(2rem,3.6vw,3.2rem)}
+.value-row h3{font-size:clamp(1.05rem,1.9vw,1.55rem);font-weight:700;flex:none;width:clamp(7.5rem,15vw,12rem)}
+.value-row p{font-size:clamp(.8rem,1.25vw,1.05rem);color:var(--ink-2);line-height:1.7}
+.value-row p b{color:var(--accent-ink)}
+/* ============================================================
+   S13 — GET STARTED (three steps + data-safety strip)
+   ============================================================ */
+.start-steps{display:flex;align-items:stretch;gap:clamp(8px,1.2vw,14px);margin-top:var(--content-gap);
+  width:100%;max-width:min(94vw,980px)}
+@media (max-width:820px){.start-steps{flex-direction:column}.step-arrow{transform:rotate(90deg)}}
+.step-card{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:20px;
+  padding:clamp(.9rem,2.2vh,1.5rem) clamp(.9rem,1.6vw,1.3rem);box-shadow:var(--shadow-sm);text-align:left}
+.step-card .st-num{font-family:var(--serif);font-style:italic;font-weight:600;color:var(--accent);
+  font-size:clamp(1.3rem,2.4vw,2rem);display:block;line-height:1}
+.step-card b{display:block;font-size:clamp(.95rem,1.5vw,1.2rem);margin:clamp(.4rem,1vh,.7rem) 0 clamp(.2rem,.6vh,.4rem)}
+.step-card p{font-size:clamp(.74rem,1.1vw,.92rem);color:var(--ink-3);line-height:1.65}
+.step-arrow{align-self:center;color:var(--accent);flex:none}
+.step-arrow svg{width:clamp(16px,1.8vw,24px);height:clamp(16px,1.8vw,24px)}
+.sec-strip{display:flex;align-items:center;gap:10px;margin-top:var(--content-gap);
+  background:linear-gradient(160deg,#effaf5,#e2f6ec);border:1px solid rgba(16,185,129,.3);border-radius:999px;
+  padding:clamp(.55rem,1.4vh,.85rem) clamp(1rem,2vw,1.5rem);font-size:clamp(.76rem,1.15vw,.98rem);
+  color:var(--ink-2);max-width:min(94vw,900px);line-height:1.6}
+.sec-strip b{color:var(--accent-ink)}
+.s-close .slide-content{align-items:center;text-align:center;position:relative}
+.close-title{font-size:clamp(2.4rem,5.4vw,4.6rem)}
+.close-sub{font-size:clamp(.95rem,1.6vw,1.25rem);color:var(--ink-2);margin-top:clamp(.9rem,2.4vh,1.5rem)}
+.close-brand{display:flex;align-items:center;gap:10px;margin-top:clamp(1.4rem,4vh,2.6rem);
+  font-family:var(--mono);font-weight:600;letter-spacing:.2em;color:var(--ink-2);font-size:clamp(.75rem,1.1vw,.95rem)}
+.watermark{position:absolute;bottom:clamp(8px,1.5vw,16px);left:50%;transform:translateX(-50%);
+  font-size:clamp(.6rem,.85vw,.78rem);color:var(--ink-4);font-family:var(--mono)}
+.watermark a{color:inherit;text-decoration:underline}
+.sec-eyebrow-center{justify-content:center}
+.sec-eyebrow-center::after{content:'';width:22px;height:2px;background:var(--accent);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+<div class="slide-counter" id="slideCounter" aria-live="polite"></div>
+<button class="autoplay-btn" id="autoplayBtn" title="自动巡播 (P)"><span class="ap-dot"></span><span id="apLabel">自动巡播</span></button>
+<div class="kbd-hint" id="kbdHint">← → 翻页 · 图表自动演示 · P 自动巡播</div>
+<div id="deck">
+
+<!-- ============ S1 · COVER ============ -->
+<section class="slide s-cover" aria-label="封面">
+  <div class="cover-bg"></div>
+  <div class="slide-content">
+    <div class="cover-brand rv"><span class="ava logo-dot" data-agent="1"></span></div>
+    <h1 class="cover-title h-serif rv d1">办公软件 <span class="em">+ Agent</span><br>让协作长出记忆</h1>
+    <p class="cover-sub rv d2">不换工具，不改习惯 ——<br>让每一条消息、每一份文件、每一次会议，自动沉淀为公司的记忆。</p>
+    <div class="cover-chips">
+      <span class="cover-chip rv-pop d3"><span data-icon="file"></span>文件不再石沉大海</span>
+      <span class="cover-chip rv-pop d4"><span data-icon="check"></span>任务自动同步</span>
+      <span class="cover-chip rv-pop d5"><span data-icon="mic"></span>会议自动总结</span>
+      <span class="cover-chip rv-pop d6"><span data-icon="lock"></span>权限分明</span>
+    </div>
+    <div class="cover-cast rv d7" id="coverCast"></div>
+    <div class="cover-float" style="top:20%;left:12%;animation-delay:.4s"><span data-icon="file"></span>新版报价单.xlsx</div>
+    <div class="cover-float" style="top:30%;right:11%;animation-delay:1.6s"><span data-icon="mic"></span>周会纪要 · 已生成</div>
+    <div class="cover-float" style="bottom:22%;left:16%;animation-delay:2.4s"><span data-icon="check"></span>客户回款 · 已记录</div>
+    <div class="cover-float" style="bottom:27%;right:15%;animation-delay:.9s"><span data-icon="spark"></span>问 Agent，秒回</div>
+  </div>
+</section>
+
+<!-- ============ S2 · CAST ============ -->
+<section class="slide" aria-label="部门阵容">
+  <div class="slide-content">
+    <div class="eyebrow rv">以一家公司为例</div>
+    <h2 class="h-serif rv d1" style="font-size:var(--h2-size);margin-top:clamp(.4rem,1.2vh,.8rem)">四个部门，一个老板，十七个人</h2>
+    <div class="cast-grid" id="castGrid"></div>
+    <div class="cast-boss rv d7">
+      <span class="ava" data-ava="boss"></span>
+      <p><b>老陈 · CEO</b> —— 每天最想知道的一件事：各个部门今天到底干了什么？</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S3 · PAIN — 3 pains, 3 rotating live demos ============ -->
+<section class="slide" aria-label="痛点" id="painSlide">
+  <div class="slide-content two-col">
+    <div class="col-txt">
+      <div class="eyebrow rv">没有 Agent 之前</div>
+      <h2 class="h-serif rv d1" style="font-size:var(--h2-size);margin-top:clamp(.4rem,1.2vh,.8rem)">每天都在上演的三件事</h2>
+      <div class="pain-list">
+        <div class="pain-item rv d2 act"><span class="p-num">01</span><div><b>信息不流通</b><span>跨部门要个文件，得层层去问，问到了还不一定是最新版。</span><span class="p-hint">案发现场 · 正在播放 →</span></div></div>
+        <div class="pain-item rv d3"><span class="p-num">02</span><div><b>数据不沉淀</b><span>决定和文件散落在聊天记录里，两小时就被新消息冲走。</span><span class="p-hint">点击查看这一幕 →</span></div></div>
+        <div class="pain-item rv d4"><span class="p-num">03</span><div><b>会海战术</b><span>为了对齐进度，每天开同步会 —— 开完，第二天接着开。</span><span class="p-hint">点击查看这一幕 →</span></div></div>
+      </div>
+    </div>
+    <div class="col-fig rv-r d3">
+      <div class="pain-demos" id="painDemos">
+        <!-- demo 1 · 信息不流通：跨部门找文件接力 -->
+        <div class="chat act" data-scene>
+          <div class="chat-hd"><span class="c-dot" style="background:var(--mkt)"></span><b>跨部门要个文件</b><span>没有 Agent</span></div>
+          <div class="chat-bd">
+            <div class="msg sys" data-t="300"><div class="bubble">—— 市场销售部群 · 09:30 ——</div></div>
+            <div class="msg" data-t="800"><span class="ava" data-ava="ayan"></span><div class="m-body"><div class="m-meta"><span class="who">阿妍 · 线下市场</span></div><div class="bubble">谁有产品介绍 PPT 最新版？明天见客户要用</div></div></div>
+            <div class="msg" data-t="2100"><span class="ava" data-ava="laokang"></span><div class="m-body"><div class="m-meta"><span class="who">老康 · 负责人</span></div><div class="bubble">我这只有上个月的……我去问产品部</div></div></div>
+            <div class="msg sys" data-t="3400"><div class="bubble">—— 产品部群 · 10:15 ——</div></div>
+            <div class="msg" data-t="4000"><span class="ava" data-ava="laokang"></span><div class="m-body"><div class="m-meta"><span class="who">老康</span></div><div class="bubble">@静姐 产品介绍最新版，麻烦发我一份？</div></div></div>
+            <div class="msg" data-t="5300"><span class="ava" data-ava="jingjie"></span><div class="m-body"><div class="m-meta"><span class="who">静姐 · 产品负责人</span></div><div class="bubble">在小雅电脑里，她在开会，等她出来哈</div></div></div>
+            <div class="msg sys" data-t="6500"><div class="bubble">—— 两个半小时后 · 12:00 ——</div></div>
+            <div class="msg" data-t="7100"><span class="ava" data-ava="xiaoya"></span><div class="m-body"><div class="m-meta"><span class="who">小雅 · 设计</span></div><div class="bubble"><div class="filecard"><span class="f-ico" style="background:var(--ad-weak)"><span data-icon="doc" data-c="#e8836b"></span></span><div><b>产品介绍_v2.pptx</b><span>3 月 · PPTX</span></div></div>来了来了，发你～</div></div></div>
+            <div class="msg" data-t="8600"><span class="ava" data-ava="ayan"></span><div class="m-body"><div class="m-meta"><span class="who">阿妍</span></div><div class="bubble">等等……这好像是上上版 <span class="sigh" style="margin-left:6px">2 个部门 · 2.5 小时 · 还是旧版</span></div></div></div>
+          </div>
+        </div>
+        <!-- demo 2 · 数据不沉淀：同一个问题被问三遍 -->
+        <div class="chat" data-scene>
+          <div class="chat-hd"><span class="c-dot" style="background:var(--dev)"></span><b>研发部 · 工作群</b><span>没有 Agent</span></div>
+          <div class="chat-bd">
+            <div class="msg sys" data-t="300"><div class="bubble">—— 上午 10:02 ——</div></div>
+            <div class="msg" data-t="800"><span class="ava" data-ava="xiaolin"></span><div class="m-body"><div class="m-meta"><span class="who">小林 · 前端</span></div><div class="bubble">凯哥，新版方案定稿了吗？</div></div></div>
+            <div class="msg" data-t="2100"><span class="ava" data-ava="dakai"></span><div class="m-body"><div class="m-meta"><span class="who">大凯 · 负责人</span></div><div class="bubble">定了，用 B 方案，文件我发你。</div></div></div>
+            <div class="msg sys" data-t="3300"><div class="bubble">—— 下午 14:40 ——</div></div>
+            <div class="msg" data-t="4000"><span class="ava" data-ava="azhe"></span><div class="m-body"><div class="m-meta"><span class="who">阿哲 · 后端</span></div><div class="bubble">凯哥，方案最后定哪个了？</div></div></div>
+            <div class="msg" data-t="5300"><span class="ava" data-ava="dakai"></span><div class="m-body"><div class="m-meta"><span class="who">大凯 · 负责人</span></div><div class="bubble">…B 方案，上午说过一次了</div></div></div>
+            <div class="msg sys" data-t="6500"><div class="bubble">—— 晚上 19:12 ——</div></div>
+            <div class="msg" data-t="7200"><span class="ava" data-ava="xiaoai"></span><div class="m-body"><div class="m-meta"><span class="who">小艾 · AI 产品</span></div><div class="bubble">那个……方案定稿了吗？文件在哪？</div></div></div>
+            <div class="msg" data-t="8700"><span class="ava" data-ava="dakai"></span><div class="m-body"><div class="m-meta"><span class="who">大凯 · 负责人</span></div><div class="bubble">我今天说第三遍了…… <span class="sigh" style="margin-left:6px">同一个问题 ×3</span></div></div></div>
+          </div>
+        </div>
+        <!-- demo 3 · 会海战术：一天三场同步会 -->
+        <div class="chat" data-scene>
+          <div class="chat-hd"><span class="c-dot" style="background:var(--prod)"></span><b>研发部 · 工作群</b><span>今天的会</span></div>
+          <div class="chat-bd">
+            <div class="msg sys" data-t="300"><div class="bubble">—— 上午 09:30 ——</div></div>
+            <div class="msg" data-t="800"><span class="ava" data-ava="dakai"></span><div class="m-body"><div class="m-meta"><span class="who">大凯 · 负责人</span></div><div class="bubble">10 点全员进度同步会，老地方</div></div></div>
+            <div class="msg" data-t="2100"><span class="ava" data-ava="xiaolin"></span><div class="m-body"><div class="m-meta"><span class="who">小林 · 前端</span></div><div class="bubble">收到（代码刚打开……）</div></div></div>
+            <div class="msg sys" data-t="3300"><div class="bubble">—— 下午 13:40 ——</div></div>
+            <div class="msg" data-t="3900"><span class="ava" data-ava="dakai"></span><div class="m-body"><div class="m-meta"><span class="who">大凯 · 负责人</span></div><div class="bubble">14:30 跟产品部对齐需求，都参加</div></div></div>
+            <div class="msg" data-t="5200"><span class="ava" data-ava="azhe"></span><div class="m-body"><div class="m-meta"><span class="who">阿哲 · 后端</span></div><div class="bubble">又开？……收到</div></div></div>
+            <div class="msg sys" data-t="6400"><div class="bubble">—— 傍晚 17:20 ——</div></div>
+            <div class="msg" data-t="7000"><span class="ava" data-ava="dakai"></span><div class="m-body"><div class="m-meta"><span class="who">大凯 · 负责人</span></div><div class="bubble">17:30 补个短会，把上午没对完的对完</div></div></div>
+            <div class="msg" data-t="8400"><span class="ava" data-ava="laozhou"></span><div class="m-body"><div class="m-meta"><span class="who">老周 · 算法</span></div><div class="bubble">今天一共写了 3 行代码 <span class="sigh" style="margin-left:6px">同步会 ×3 · 活没干多少</span></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S4 · POSITIONING — the answer to the pain ============ -->
+<section class="slide s-pos" aria-label="定位">
+  <div class="slide-content">
+    <div class="eyebrow sec-eyebrow-center rv" style="justify-content:center">我们的答案</div>
+    <h2 class="pos-title h-serif rv d1" style="margin-top:clamp(.8rem,2.4vh,1.4rem)">
+      <span class="neg">不是取代办公软件</span><br>而是给它装一个<span class="em">会记事的大脑</span>
+    </h2>
+    <div class="pos-formula rv d3">
+      <span class="f-box">办公软件<small style="display:block;font-family:var(--mono);font-size:.5em;font-weight:400;color:var(--ink-3);margin-top:2px">负责沟通</small></span>
+      <span class="f-op">+</span>
+      <span class="f-box green">Agent<small style="display:block;font-family:var(--mono);font-size:.5em;font-weight:400;margin-top:2px">负责记住</small></span>
+      <span class="f-op">=</span>
+      <span class="f-box">会沉淀的协作</span>
+    </div>
+    <div class="pos-notes">
+      <div class="pos-note rv d4"><b>还没用上协同软件？</b><span>不用先学一套复杂系统，在群里正常说话就行。</span></div>
+      <div class="pos-note rv d5"><b>用了但没用好？</b><span>不改变现有流程，Agent 在旁边默默把信息接住。</span></div>
+      <div class="pos-note rv d6"><b>不加新负担</b><span>没有新表单、新流程 —— 该干嘛干嘛，剩下交给 Agent。</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S5 · ORG CHART BEFORE / AFTER ============ -->
+<section class="slide stage-slide" aria-label="组织架构对比" id="orgSlide">
+  <div class="slide-content">
+    <div class="stage-top">
+      <div>
+        <div class="eyebrow rv">组织架构 · Organization</div>
+        <h2 class="h-serif rv d1" style="font-size:var(--h2-size);margin-top:clamp(.3rem,1vh,.6rem)">同样的人，两种走法</h2>
+      </div>
+      <div class="org-toggle rv d2" id="orgToggle">
+        <button id="btnBefore" class="act-bad"><span class="tg-dot"></span>没有 Agent</button>
+        <button id="btnAfter"><span class="tg-dot"></span>有 Agent</button>
+      </div>
+    </div>
+    <div class="stage-wrap rv d2">
+      <div class="stage" id="orgStage"></div>
+    </div>
+    <div class="org-stats" id="orgStats"></div>
+  </div>
+</section>
+
+<!-- ============ S6 · SCENE 1 FILE ============ -->
+<section class="slide" aria-label="场景一 文件沉淀">
+  <div class="slide-content two-col">
+    <div class="col-txt">
+      <div class="scene-eyebrow rv"><span class="sc-num">01</span><div class="eyebrow">场景一 · 文件沉淀</div></div>
+      <h2 class="scene-title h-serif rv d1">文件，再也不会<br>「被消息冲走」</h2>
+      <ul class="scene-points">
+        <li class="rv d2"><span class="pt-ico"><span data-icon="file"></span></span><span>群里发的每份文件，Agent <b>自动归档</b>，记住是谁、什么时候发的。</span></li>
+        <li class="rv d3"><span class="pt-ico"><span data-icon="clock"></span></span><span>两小时后消息被淹没？<b>没关系</b>，它已经在部门资料库里了。</span></li>
+        <li class="rv d4"><span class="pt-ico"><span data-icon="spark"></span></span><span>谁需要，<b>直接问 Agent</b> —— 不用再打扰任何人。</span></li>
+      </ul>
+    </div>
+    <div class="col-fig rv-r d3">
+      <div class="chat" data-scene data-loop="12500">
+        <div class="chat-hd"><span class="c-dot" style="background:var(--prod)"></span><b>产品部 · 工作群</b><span>有 Agent</span></div>
+        <div class="chat-bd" style="height:clamp(280px,48vh,420px)">
+          <div class="msg sys" data-t="300"><div class="bubble">—— 上午 10:24 ——</div></div>
+          <div class="msg" data-t="800"><span class="ava" data-ava="xiaoya"></span><div class="m-body"><div class="m-meta"><span class="who">小雅 · 设计</span></div><div class="bubble"><div class="filecard"><span class="f-ico" style="background:var(--ad-weak)"><span data-icon="doc" data-c="#e8836b"></span></span><div><b>新版产品介绍.pptx</b><span>8.4 MB · PPTX</span></div></div>最新版在这里，大家看下</div></div></div>
+          <div class="msg mini" data-t="2200"><span class="ava" data-ava="ajie"></span><div class="m-body"><div class="bubble">收到～</div></div></div>
+          <div class="msg mini" data-t="2900"><span class="ava" data-ava="jingjie"></span><div class="m-body"><div class="bubble">好，中午过一下细节，另外下周排期今天出</div></div></div>
+          <div class="msg mini" data-t="3600"><span class="ava" data-ava="ajie"></span><div class="m-body"><div class="bubble">对了竞品那份分析也发一下</div></div></div>
+          <div class="msg sys" data-t="4600"><div class="bubble">…… 又刷了 99+ 条消息 ……</div></div>
+          <div class="msg sys" data-t="5600"><div class="bubble">—— 下午 15:47 ——</div></div>
+          <div class="msg me" data-t="6300"><span class="ava" data-ava="azhe"></span><div class="m-body"><div class="m-meta"><span class="who">阿哲 · 后端（隔壁部门）</span></div><div class="bubble">@Agent 产品介绍最新版在哪？</div></div></div>
+          <div class="msg agent typing" data-t="7300" data-hide="8300"><span class="ava" data-agent="1"></span><div class="m-body"><div class="bubble"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span></div></div></div>
+          <div class="msg agent" data-t="8400"><span class="ava" data-agent="1"></span><div class="m-body"><div class="m-meta"><span class="who">Agent</span></div><div class="bubble"><div class="filecard"><span class="f-ico" style="background:var(--ad-weak)"><span data-icon="doc" data-c="#e8836b"></span></span><div><b>新版产品介绍.pptx</b><span>产品部 · 共享区</span></div></div>在这。<span class="tag-line">10:24 由小雅上传 · 已自动归档 · 对全公司共享</span></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S7 · SCENE 2 TASKS ============ -->
+<section class="slide" aria-label="场景二 任务同步">
+  <div class="slide-content two-col">
+    <div class="col-txt">
+      <div class="scene-eyebrow rv"><span class="sc-num">02</span><div class="eyebrow">场景二 · 任务同步</div></div>
+      <h2 class="scene-title h-serif rv d1">在群里说一句话<br>任务自己更新</h2>
+      <ul class="scene-points">
+        <li class="rv d2"><span class="pt-ico"><span data-icon="check"></span></span><span>「客户已付款」「视频做完了」—— 说完，Agent <b>自动记录进度</b>。</span></li>
+        <li class="rv d3"><span class="pt-ico"><span data-icon="list"></span></span><span>部门的待办清单<b>实时更新</b>，每个人都知道推进到哪了。</span></li>
+        <li class="rv d4"><span class="pt-ico"><span data-icon="moon"></span></span><span>晚上负责人不用挨个问 —— <b>问一句 Agent</b> 就有全貌。</span></li>
+      </ul>
+    </div>
+    <div class="col-fig rv-r d3">
+      <div class="board" data-scene data-loop="12000">
+        <div class="board-hd"><span data-icon="list" style="width:16px;height:16px;display:inline-block"></span><b>市场销售部 · 今日推进</b><span class="pill" data-prog-label>1 / 5</span></div>
+        <div class="board-prog"><i data-prog style="width:20%"></i></div>
+        <div class="todo done"><span class="td-box"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p>拜访华亭制造，递交方案</p><span class="ava" data-ava="laokang"></span></div>
+        <div class="todo" data-t="2600" data-done="1"><span class="td-box"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p>星辰机械 · 回款 ¥50,000</p><span class="ava" data-ava="laokang"></span></div>
+        <div class="todo" data-t="5400" data-done="1"><span class="td-box"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p>展会物料清单确认</p><span class="ava" data-ava="ayan"></span></div>
+        <div class="todo" data-t="7600" data-done="1"><span class="td-box"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p>本地渠道商资源对接</p><span class="ava" data-ava="dapeng"></span></div>
+        <div class="todo"><span class="td-box"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><p>下月线下活动初案</p><span class="ava" data-ava="laokang"></span></div>
+        <div class="msg" data-t="1200" style="margin-top:10px"><span class="ava" data-ava="laokang"></span><div class="m-body"><div class="m-meta"><span class="who">老康 · 群里说了句</span></div><div class="bubble">星辰机械已付款 5 万，回执发合同群了</div></div></div>
+        <div class="msg agent" data-t="2400"><span class="ava" data-agent="1"></span><div class="m-body"><div class="m-meta"><span class="who">Agent</span></div><div class="bubble">已记录：星辰机械 → <b>已回款</b>，回执已归档<span class="tag-line">任务清单已同步 · 老板晚报已更新</span></div></div></div>
+        <div class="msg sys" data-t="8800"><div class="bubble">—— 21:00 · 负责人视角 ——</div></div>
+        <div class="msg me" data-t="9400"><span class="ava" data-ava="laokang"></span><div class="m-body"><div class="bubble">@Agent 今天到哪了？</div></div></div>
+        <div class="msg agent" data-t="10400"><span class="ava" data-agent="1"></span><div class="m-body"><div class="m-meta"><span class="who">Agent</span></div><div class="bubble">今日 <b>4 项完成</b> · 1 项进行中；重点：星辰机械回款 5 万。</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S8 · SCENE 3 MEETING ============ -->
+<section class="slide" aria-label="场景三 会议总结">
+  <div class="slide-content two-col">
+    <div class="col-txt">
+      <div class="scene-eyebrow rv"><span class="sc-num">03</span><div class="eyebrow">场景三 · 会议总结</div></div>
+      <h2 class="scene-title h-serif rv d1">散会的时候<br>纪要和任务已经在群里</h2>
+      <ul class="scene-points">
+        <li class="rv d2"><span class="pt-ico"><span data-icon="mic"></span></span><span>开会正常开，Agent <b>自动生成纪要</b>：结论、任务、截止时间。</span></li>
+        <li class="rv d3"><span class="pt-ico"><span data-icon="user"></span></span><span>谁负责什么、需要谁协作，<b>一条条指派清楚</b>。</span></li>
+        <li class="rv d4"><span class="pt-ico"><span data-icon="check"></span></span><span>负责人<b>审核一下</b>就发出 —— 不用再有人熬夜补纪要。</span></li>
+      </ul>
+    </div>
+    <div class="col-fig rv-r d3">
+      <div class="meet-wrap" data-scene data-loop="13000">
+        <div class="meet-src"><span class="m-ic"><span data-icon="mic" data-c="#e0a23c"></span></span><div><b>Q3 获客复盘会</b><span>产品部 × 市场销售部 · 45 min</span></div><span class="rec" data-t="200" data-hide="1400"><i></i>REC</span></div>
+        <div class="meet-arrow" data-t="1500" style="opacity:0;transition:opacity .4s ease"><svg viewBox="0 0 20 20" fill="none"><path d="M10 3v11m0 0 5-5m-5 5-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>散会 · 自动总结</span></div>
+        <div class="minutes">
+          <div class="minutes-hd"><span class="ava" data-agent="1"></span><b>会议纪要 · Agent 生成</b><span>16:45</span></div>
+          <div class="minutes-bd">
+            <p class="mn-line" data-type-line="1">结论：Q3 主推线下展会获客，线上素材配合更新。</p>
+            <p class="mn-line" data-type-line="2" style="margin-bottom:clamp(6px,1.2vh,10px)">预算维持不变，重点城市先跑两场试点。</p>
+            <div class="task-row" data-t="6200"><span class="ava" data-ava="xiaoya"></span><b>小雅</b><p>新版展会物料设计</p><span class="due">周三前</span></div>
+            <div class="task-row" data-t="7000"><span class="ava" data-ava="ayan"></span><b>阿妍</b><p>确认两场试点城市档期</p><span class="due">周五前</span></div>
+            <div class="task-row" data-t="7800"><span class="ava" data-ava="ajie"></span><b>阿杰</b><p>整理获客数据口径 · 需研发协作</p><span class="due">下周一</span></div>
+            <span class="stamp" data-t="9600">负责人已审核 ✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S9 · SCENE 4 PERMISSION ============ -->
+<section class="slide" aria-label="场景四 权限">
+  <div class="slide-content two-col">
+    <div class="col-txt">
+      <div class="scene-eyebrow rv"><span class="sc-num">04</span><div class="eyebrow">场景四 · 权限分级</div></div>
+      <h2 class="scene-title h-serif rv d1">该看的看得到<br>不该看的看不到</h2>
+      <ul class="scene-points">
+        <li class="rv d2"><span class="pt-ico"><span data-icon="lock"></span></span><span>每个部门的沉淀分两层：<b>部门内</b>的过程文件，<b>全公司共享</b>的成果。</span></li>
+        <li class="rv d3"><span class="pt-ico"><span data-icon="spark"></span></span><span>跨部门要资料，<b>不用找人</b> —— Agent 从共享区直接给。</span></li>
+        <li class="rv d4"><span class="pt-ico"><span data-icon="shield"></span></span><span>内部草稿、敏感数据，Agent <b>自动挡住</b>，不越界。</span></li>
+      </ul>
+    </div>
+    <div class="col-fig rv-r d3">
+      <div class="perm-wrap" data-scene data-loop="13000">
+        <div class="perm-zones">
+          <div class="perm-zone inner"><h4><span data-icon="lock" data-c="#9a9a94"></span>部门内 · 仅本部门</h4>
+            <div class="pz-item"><i></i>设计草稿 · 过程稿</div><div class="pz-item"><i></i>内部讨论记录</div><div class="pz-item"><i></i>阶段性数据</div></div>
+          <div class="perm-zone shared"><h4><span data-icon="globe" data-c="#047857"></span>全公司 · 共享区</h4>
+            <div class="pz-item"><i></i>产品介绍 · 报价单</div><div class="pz-item"><i></i>品牌素材 · 排期表</div><div class="pz-item"><i></i>已定稿的方案</div></div>
+        </div>
+        <div class="perm-demo" id="permDemo">
+          <div class="perm-req"><span class="ava" data-ava="ayan"></span><p id="permAsk">市场部阿妍：@Agent 要一份产品介绍 PPT</p></div>
+          <div class="perm-track" id="permTrack">
+            <div class="pt-line"><i></i></div>
+            <div class="pt-stop" style="left:8%"><span class="pt-ico"><span data-icon="user" data-c="#5b5b57" style="width:58%;height:58%"></span></span><span class="pt-lbl">发起请求</span></div>
+            <div class="pt-stop" style="left:50%"><span class="pt-ico" style="border-color:rgba(16,185,129,.5);background:var(--accent-weak)"><span data-icon="shield" data-c="#047857" style="width:58%;height:58%"></span></span><span class="pt-lbl">Agent 校验权限</span></div>
+            <div class="pt-stop" style="left:92%"><span class="pt-ico" id="permEndIco"><span data-icon="doc" data-c="#10b981" style="width:58%;height:58%"></span></span><span class="pt-lbl" id="permEndLabel">共享区取件</span></div>
+          </div>
+          <p class="perm-verdict" id="permVerdict"><span class="v-ok"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S10 · SCENE 5 HANDOVER ============ -->
+<section class="slide" aria-label="场景五 无缝交接">
+  <div class="slide-content two-col">
+    <div class="col-txt">
+      <div class="scene-eyebrow rv"><span class="sc-num">05</span><div class="eyebrow">场景五 · 无缝交接</div></div>
+      <h2 class="scene-title h-serif rv d1">人可以休假<br>记忆不休假</h2>
+      <ul class="scene-points">
+        <li class="rv d2"><span class="pt-ico"><span data-icon="bank"></span></span><span>客户脉络、报价、承诺过什么 —— 沉淀在<b>公司记忆</b>里，不在某个人的脑子里。</span></li>
+        <li class="rv d3"><span class="pt-ico"><span data-icon="user"></span></span><span>休假、调岗、离职 —— 接手的人问一句 Agent，<b>一分钟接上</b>。</span></li>
+        <li class="rv d4"><span class="pt-ico"><span data-icon="seed"></span></span><span>新人入职同理 —— <b>第一天</b>就拿到全部共享上下文。</span></li>
+      </ul>
+    </div>
+    <div class="col-fig rv-r d3">
+      <div class="chat" data-scene data-loop="13500">
+        <div class="chat-hd"><span class="c-dot" style="background:var(--mkt)"></span><b>市场销售部 · 工作群</b><span>有 Agent</span></div>
+        <div class="chat-bd" style="height:clamp(300px,50vh,440px)">
+          <div class="msg sys" data-t="300"><div class="bubble">—— 周五 17:40 ——</div></div>
+          <div class="msg" data-t="800"><span class="ava" data-ava="ayan"></span><div class="m-body"><div class="m-meta"><span class="who">阿妍 · 线下市场</span></div><div class="bubble">下周我休婚假～星辰机械先交给大鹏跟</div></div></div>
+          <div class="msg" data-t="2300"><span class="ava" data-ava="dapeng"></span><div class="m-body"><div class="m-meta"><span class="who">大鹏 · 渠道资源</span></div><div class="bubble">好嘞。@Agent 星辰机械跟到哪了？给我补个课</div></div></div>
+          <div class="msg agent typing" data-t="3500" data-hide="4500"><span class="ava" data-agent="1"></span><div class="m-body"><div class="bubble"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span></div></div></div>
+          <div class="msg agent big" data-t="4600"><span class="ava" data-agent="1"></span><div class="m-body"><div class="m-meta"><span class="who">Agent</span></div><div class="bubble"><div class="client-card"><b>星辰机械 · 跟进档案</b>
+            <div class="cc-row"><i></i>已回款 ¥50,000 · 7 月 15 日</div>
+            <div class="cc-row"><i></i>关键人：采购部王总 · 习惯线下拜访</div>
+            <div class="cc-row"><i></i>下一步：8 月初确认培训排期</div>
+            <div class="cc-row"><i></i>合同 · 报价单 · 会议纪要 ×3</div>
+          </div>给你梳理好了。<span class="tag-line">来自 4 个月群聊与会议的沉淀 · 10 秒生成</span></div></div></div>
+          <div class="msg" data-t="8200"><span class="ava" data-ava="dapeng"></span><div class="m-body"><div class="m-meta"><span class="who">大鹏</span></div><div class="bubble">齐了，下周拜访我来</div></div></div>
+          <div class="msg" data-t="9600"><span class="ava" data-ava="laokang"></span><div class="m-body"><div class="m-meta"><span class="who">老康 · 负责人</span></div><div class="bubble">都不用开交接会 <span class="cheer" style="margin-left:6px">交接会 · 0 场</span></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S11 · DATA FLOW ============ -->
+<section class="slide stage-slide" aria-label="数据流向" id="flowSlide">
+  <div class="slide-content">
+    <div class="stage-top">
+      <div>
+        <div class="eyebrow rv">数据流向 · Data Flow</div>
+        <h2 class="h-serif rv d1" style="font-size:var(--h2-size);margin-top:clamp(.3rem,1vh,.6rem)">一条消息的一生</h2>
+      </div>
+      <p class="rv d2" style="font-size:clamp(.74rem,1.1vw,.94rem);color:var(--ink-3);max-width:340px;line-height:1.65">
+        说过的话、发过的文件、开过的会 —— 流进 Agent，沉淀成公司记忆，再被随时用起来。</p>
+    </div>
+    <div class="stage-wrap rv d2">
+      <div class="stage" id="flowStage"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S12 · DAILY DIGEST ============ -->
+<section class="slide" aria-label="每日晚报" data-scene data-loop="0">
+  <div class="slide-content">
+    <div class="eyebrow rv">每天 21:00 · 自动生成</div>
+    <h2 class="h-serif rv d1" style="font-size:var(--h2-size);margin-top:clamp(.4rem,1.2vh,.8rem)">老板的一天，看这一页就够了</h2>
+    <div class="digest-grid">
+      <div class="dg-card rv d2" style="--dc:var(--dev)">
+        <h4><span class="ava" data-ava="dakai"></span>研发部</h4>
+        <div class="dg-nums"><div class="dg-num"><b data-count="3">0</b><span>完成</span></div><div class="dg-num"><b data-count="2">0</b><span>进行中</span></div><div class="dg-num"><b data-count="6">0</b><span>新增沉淀</span></div></div>
+        <p class="dg-note">接口联调完成，新版本进入测试。</p>
+      </div>
+      <div class="dg-card rv d3" style="--dc:var(--prod)">
+        <h4><span class="ava" data-ava="jingjie"></span>产品部</h4>
+        <div class="dg-nums"><div class="dg-num"><b data-count="2">0</b><span>完成</span></div><div class="dg-num"><b data-count="3">0</b><span>进行中</span></div><div class="dg-num"><b data-count="5">0</b><span>新增沉淀</span></div></div>
+        <p class="dg-note">新版产品介绍定稿，已入共享区。</p>
+      </div>
+      <div class="dg-card rv d4" style="--dc:var(--mkt)">
+        <h4><span class="ava" data-ava="laokang"></span>市场销售部</h4>
+        <div class="dg-nums"><div class="dg-num"><b data-count="4">0</b><span>完成</span></div><div class="dg-num"><b data-count="1">0</b><span>进行中</span></div><div class="dg-num"><b data-count="7">0</b><span>新增沉淀</span></div></div>
+        <p class="dg-note">星辰机械回款 5 万，两场试点确认。</p>
+      </div>
+      <div class="dg-card rv d5" style="--dc:var(--ad)">
+        <h4><span class="ava" data-ava="xiaolu"></span>广告营销部</h4>
+        <div class="dg-nums"><div class="dg-num"><b data-count="3">0</b><span>完成</span></div><div class="dg-num"><b data-count="2">0</b><span>进行中</span></div><div class="dg-num"><b data-count="5">0</b><span>新增沉淀</span></div></div>
+        <p class="dg-note">两条视频发布，获客素材已归档。</p>
+      </div>
+    </div>
+    <div class="digest-msg rv d6">
+      <span class="ava" data-agent="1"></span>
+      <div class="bubble">老陈，今日全公司：<b>12 项完成</b> · 8 项进行中 · <b>23 条新增沉淀</b>；3 个跨部门协作请求全部闭环。明早例会，其实可以不开。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S13 · VALUE ============ -->
+<section class="slide" aria-label="价值总结">
+  <div class="slide-content" style="align-items:center">
+    <div class="eyebrow rv" style="justify-content:center">为什么值得</div>
+    <h2 class="h-serif rv d1" style="font-size:var(--h2-size);margin-top:clamp(.4rem,1.2vh,.8rem);text-align:center">
+      沉淀下来的数据，是会<span style="color:var(--accent-ink)">复利</span>的</h2>
+    <div class="value-rows">
+      <div class="value-row rv d2"><span class="v-k">一</span><h3>跨部门协作</h3><p>不再等人转发、不再层层去问 —— <b>直接问 Agent</b>，共享区秒级取件。</p></div>
+      <div class="value-row rv d3"><span class="v-k">二</span><h3>新人无缝衔接</h3><p>入职第一天，团队的共享沉淀就全在手边 —— <b>不用再「问遍老员工」</b>。</p></div>
+      <div class="value-row rv d4"><span class="v-k">三</span><h3>会越开越少</h3><p>进度实时可查、晚报自动生成 —— 同步会从一场接一场，<b>变成一条消息</b>。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S14 · GET STARTED ============ -->
+<section class="slide" aria-label="怎么开始">
+  <div class="slide-content" style="align-items:center">
+    <div class="eyebrow rv" style="justify-content:center">落地 · Get Started</div>
+    <h2 class="h-serif rv d1" style="font-size:var(--h2-size);margin-top:clamp(.4rem,1.2vh,.8rem);text-align:center">明天上班，就能开始</h2>
+    <div class="start-steps">
+      <div class="step-card rv-pop d2"><span class="st-num">01</span><b>用现有的群</b><p>不换软件 —— 继续用你们的飞书、企业微信或钉钉，群还是那些群。</p></div>
+      <div class="step-arrow rv d3"><svg viewBox="0 0 20 20" fill="none"><path d="M3 10h13m0 0-5-5m5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="step-card rv-pop d3"><span class="st-num">02</span><b>把 Agent 拉进群</b><p>像加一个新同事，十分钟接入 —— 不动任何现有流程和习惯。</p></div>
+      <div class="step-arrow rv d4"><svg viewBox="0 0 20 20" fill="none"><path d="M3 10h13m0 0-5-5m5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="step-card rv-pop d4"><span class="st-num">03</span><b>正常说话</b><p>该发文件发文件，该开会开会 —— 沉淀、同步、汇总，交给 Agent。</p></div>
+    </div>
+    <div class="sec-strip rv d5"><span data-icon="shield" data-c="#047857" style="width:18px;height:18px;flex:none"></span>
+      <span>数据只沉淀在<b>你们自己的</b>办公软件和知识库里，Agent 只负责整理与检索 —— <b>权限始终在你手里</b>。</span></div>
+  </div>
+</section>
+
+<!-- ============ S15 · CLOSING ============ -->
+<section class="slide s-close" aria-label="结尾">
+  <div class="cover-bg"></div>
+  <div class="slide-content">
+    <span class="ava rv" data-agent="1" style="width:clamp(60px,7vw,92px);height:clamp(60px,7vw,92px)"></span>
+    <h2 class="close-title h-serif rv d1" style="margin-top:clamp(1rem,3vh,1.8rem)">协作，该有记忆了。</h2>
+    <p class="close-sub rv d2">工具还是那个工具，习惯还是那个习惯 —— 只是从今天起，说过的每句话都算数。</p>
+    <div class="close-brand rv d3"><span class="ava" data-agent="1" style="width:26px;height:26px"></span>谢谢 · 欢迎交流</div>
+  </div>
+  <p class="watermark">Made with Next Slide</p>
+</section>
+</div>
+
+<script>
+/* ============================================================
+   CAST & AVATAR FACTORY
+   Hand-drawn-flavored flat SVG avatars on pastel grounds,
+   echoing the loci people page.
+   ============================================================ */
+/* SMIL animateMotion ignores CSS reduced-motion rules — gate it in JS */
+const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEPTS={
+  dev:{label:'研发部',c:'#5b86d6',weak:'#e6edf9',bg:['#e7eefb','#d5e1f5']},
+  prod:{label:'产品部',c:'#9b7ed0',weak:'#efe9f9',bg:['#efe9f9','#e2d8f2']},
+  mkt:{label:'市场销售部',c:'#e0a23c',weak:'#f7efdf',bg:['#f9f0dd','#f2e3c4']},
+  ad:{label:'广告营销部',c:'#e8836b',weak:'#fbe9e3',bg:['#fbeae4','#f6d9cf']},
+  boss:{label:'CEO',c:'#10b981',weak:'#d9f5e9',bg:['#e3f5ec','#cfeee0']}
+};
+const CAST={
+  boss:   {name:'老陈', role:'CEO',      dept:'boss', hair:'side',  hc:'#2f2a26', skin:'#f2cba9', shirt:'#166b52', glasses:1},
+  dakai:  {name:'大凯', role:'研发负责人', dept:'dev',  hair:'short', hc:'#2f2a26', skin:'#f6d7bd', shirt:'#3f68b5'},
+  xiaolin:{name:'小林', role:'前端',      dept:'dev',  hair:'spiky', hc:'#5a3d28', skin:'#f6d7bd', shirt:'#7c9fdd'},
+  azhe:   {name:'阿哲', role:'后端',      dept:'dev',  hair:'short', hc:'#232323', skin:'#eec39c', shirt:'#41576e', glasses:1},
+  xiaoai: {name:'小艾', role:'AI 产品',   dept:'dev',  hair:'bob',   hc:'#3b2f2a', skin:'#f8dcc4', shirt:'#5b86d6', f:1},
+  laozhou:{name:'老周', role:'算法',      dept:'dev',  hair:'bald',  hc:'#4c4640', skin:'#f2cba9', shirt:'#2e4a75', glasses:1},
+  jingjie:{name:'静姐', role:'产品负责人', dept:'prod', hair:'long',  hc:'#3a2d33', skin:'#f6d7bd', shirt:'#7d5fb2', f:1},
+  ajie:   {name:'阿杰', role:'产品经理',   dept:'prod', hair:'side',  hc:'#443428', skin:'#f1c9a8', shirt:'#a98fd6'},
+  xiaoya: {name:'小雅', role:'设计师',     dept:'prod', hair:'bun',   hc:'#513a2c', skin:'#f8dcc4', shirt:'#c3aee2', f:1},
+  laokang:{name:'老康', role:'市场销售负责人', dept:'mkt', hair:'short', hc:'#33291f', skin:'#eec39c', shirt:'#c2882f'},
+  ayan:   {name:'阿妍', role:'线下市场',   dept:'mkt',  hair:'pony',  hc:'#40302b', skin:'#f6d7bd', shirt:'#e0a23c', f:1},
+  dapeng: {name:'大鹏', role:'渠道资源',   dept:'mkt',  hair:'spiky', hc:'#2f2a26', skin:'#e8b48d', shirt:'#d9b063'},
+  xiaolu: {name:'小鹿', role:'广告营销负责人', dept:'ad', hair:'bob',  hc:'#6a4632', skin:'#f8dcc4', shirt:'#d16a51', f:1},
+  afei:   {name:'阿飞', role:'抖音',      dept:'ad',   hair:'spiky', hc:'#26221f', skin:'#f1c9a8', shirt:'#e8836b'},
+  taozi:  {name:'桃子', role:'小红书',    dept:'ad',   hair:'bun',   hc:'#7a4a3a', skin:'#f8dcc4', shirt:'#eda28e', f:1},
+  akun:   {name:'阿坤', role:'视频号',    dept:'ad',   hair:'beanie',hc:'#3b3b3b', skin:'#eec39c', shirt:'#c9705c'},
+  wenwen: {name:'文文', role:'公众号',    dept:'ad',   hair:'long',  hc:'#2e2622', skin:'#f6d7bd', shirt:'#f0b3a2', f:1}
+};
+const HAIR={
+  short:'M32,58 C30,31 45,20 60,20 C75,20 90,31 88,58 C86,43 78,36 60,36 C42,36 34,43 32,58 Z',
+  side: 'M32,58 C30,30 45,19 60,19 C76,19 90,30 88,55 C87,41 83,34 71,33 C61,33 59,40 49,42 C40,44 34,49 32,58 Z',
+  spiky:'M32,54 L37,29 L44,39 L51,23 L60,34 L69,23 L76,39 L83,29 L88,54 C80,41 40,41 32,54 Z',
+  bob:  'M30,80 C26,35 42,18 60,18 C78,18 94,35 90,80 C86,77 84,70 83,61 C82,49 80,43 76,39 C70,45 50,45 44,39 C40,43 38,49 37,61 C36,70 34,77 30,80 Z',
+  long: 'M26,92 C23,39 42,17 60,17 C78,17 97,39 94,92 C88,89 86,78 85,64 C84,51 82,43 77,38 C70,44 50,44 43,38 C38,43 36,51 35,64 C34,78 32,89 26,92 Z',
+  bald: 'M32,56 C31,46 33,41 38,38 C36,46 36,52 37,58 Z M88,56 C89,46 87,41 82,38 C84,46 84,52 83,58 Z'
+};
+function avatarSVG(key,opts={}){
+  const p=CAST[key], d=DEPTS[p.dept];
+  const [g1,g2]=opts.bg||d.bg;
+  const ink='#2c2a26', sw=3, id='g'+key+(opts.uid||'');
+  let hair='';
+  if(p.hair==='bun') hair=`<path d="${HAIR.short}" fill="${p.hc}" stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"/><circle cx="60" cy="15" r="9" fill="${p.hc}" stroke="${ink}" stroke-width="${sw}"/>`;
+  else if(p.hair==='pony') hair=`<path d="${HAIR.side}" fill="${p.hc}" stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"/><path d="M86,40 C100,45 103,63 93,78 C97,62 92,49 82,46 Z" fill="${p.hc}" stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+  else if(p.hair==='beanie') hair=`<path d="M31,54 C31,29 45,18 60,18 C75,18 89,29 89,54 L89,58 C69,53 51,53 31,58 Z" fill="#7a9e87" stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"/><path d="M30,52 C50,47 70,47 90,52 L90,61 C70,56 50,56 30,61 Z" fill="#8fb29b" stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"/><circle cx="60" cy="13" r="6" fill="#f6f6f4" stroke="${ink}" stroke-width="${sw}"/>`;
+  else if(p.hair==='bald') hair=`<path d="${HAIR.bald}" fill="${p.hc}" stroke="${ink}" stroke-width="2.4" stroke-linejoin="round"/><path d="M50,25 Q60,20 70,25" fill="none" stroke="${ink}" stroke-width="2.2" stroke-linecap="round"/>`;
+  else hair=`<path d="${HAIR[p.hair]}" fill="${p.hc}" stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+  const glasses=p.glasses?`<g fill="none" stroke="${ink}" stroke-width="2.4"><circle cx="49" cy="58" r="8.5"/><circle cx="71" cy="58" r="8.5"/><path d="M57.5,58 Q60,55.5 62.5,58"/><path d="M40.5,58 L34,56"/><path d="M79.5,58 L86,56"/></g>`
+    :`<circle cx="49" cy="58" r="2.7" fill="${ink}"/><circle cx="71" cy="58" r="2.7" fill="${ink}"/>`;
+  const lash=p.f&&!p.glasses?`<path d="M44,54 Q48,52 52,53 M66,53 Q70,52 74,54" fill="none" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>`
+    :`<path d="M44,50 Q49,47.5 54,49 M66,49 Q71,47.5 76,50" fill="none" stroke="${ink}" stroke-width="2.2" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${p.name}">
+  <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${g1}"/><stop offset="1" stop-color="${g2}"/></linearGradient></defs>
+  <rect width="120" height="120" rx="${opts.rx??0}" fill="url(#${id})"/>
+  <path d="M20,124 C22,100 40,90 60,90 C80,90 98,100 100,124 Z" fill="${p.shirt}" stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"/>
+  <circle cx="33" cy="62" r="5.5" fill="${p.skin}" stroke="${ink}" stroke-width="${sw}"/>
+  <circle cx="87" cy="62" r="5.5" fill="${p.skin}" stroke="${ink}" stroke-width="${sw}"/>
+  <ellipse cx="60" cy="59" rx="27" ry="28" fill="${p.skin}" stroke="${ink}" stroke-width="${sw}"/>
+  ${glasses}${lash}
+  <path d="M52,70 Q60,${p.f?76:77} 68,70" fill="none" stroke="${ink}" stroke-width="2.8" stroke-linecap="round"/>
+  <ellipse cx="42" cy="67" rx="4.6" ry="3" fill="#f2a8a0" opacity=".5"/>
+  <ellipse cx="78" cy="67" rx="4.6" ry="3" fill="#f2a8a0" opacity=".5"/>
+  ${hair}
+</svg>`;
+}
+/* Agent mark — geometric emerald badge with an AI spark. Reads as a
+   product logo (like bot avatars in 飞书/钉钉), deliberately not a face. */
+let AG_UID=0;
+function agentSVG(){
+  const id='ag'+(AG_UID++);
+  return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agent">
+  <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#0d9d70"/></linearGradient></defs>
+  <circle cx="60" cy="60" r="46" fill="#d9f5e9"/>
+  <rect x="27" y="27" width="66" height="66" rx="20" fill="url(#${id})" stroke="#2c2a26" stroke-width="3"/>
+  <path d="M56,40 Q59,57 76,60 Q59,63 56,80 Q53,63 36,60 Q53,57 56,40 Z" fill="#f6fefb"/>
+  <path d="M78,34 Q79,41 86,42 Q79,43 78,50 Q77,43 70,42 Q77,41 78,34 Z" fill="#d9f5e9"/>
+</svg>`;
+}
+/* tiny icon set (no emoji) */
+const ICONS={
+  file:'<path d="M5 2h7l4 4v12H5z" fill="none" stroke="CLR" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 2v4h4" fill="none" stroke="CLR" stroke-width="1.8" stroke-linejoin="round"/>',
+  doc:'<path d="M5 2h7l4 4v12H5z" fill="none" stroke="CLR" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 11h5M8 14h5" stroke="CLR" stroke-width="1.8" stroke-linecap="round"/>',
+  check:'<path d="M4 10.5 8.5 15 16 5.5" fill="none" stroke="CLR" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
+  lock:'<rect x="4.5" y="9" width="11" height="8.5" rx="2" fill="none" stroke="CLR" stroke-width="1.8"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="CLR" stroke-width="1.8"/>',
+  mic:'<rect x="7.5" y="2.5" width="5" height="9" rx="2.5" fill="none" stroke="CLR" stroke-width="1.8"/><path d="M4.5 10a5.5 5.5 0 0 0 11 0M10 15.5V18" fill="none" stroke="CLR" stroke-width="1.8" stroke-linecap="round"/>',
+  clock:'<circle cx="10" cy="10" r="7.5" fill="none" stroke="CLR" stroke-width="1.8"/><path d="M10 5.5V10l3 2" fill="none" stroke="CLR" stroke-width="1.8" stroke-linecap="round"/>',
+  spark:'<path d="M10 2l1.8 6.2L18 10l-6.2 1.8L10 18l-1.8-6.2L2 10l6.2-1.8z" fill="none" stroke="CLR" stroke-width="1.7" stroke-linejoin="round"/>',
+  list:'<path d="M7 5h9M7 10h9M7 15h9" stroke="CLR" stroke-width="1.8" stroke-linecap="round"/><circle cx="3.5" cy="5" r="1.2" fill="CLR"/><circle cx="3.5" cy="10" r="1.2" fill="CLR"/><circle cx="3.5" cy="15" r="1.2" fill="CLR"/>',
+  moon:'<path d="M16.5 12.5A7 7 0 0 1 7.5 3.5a7 7 0 1 0 9 9z" fill="none" stroke="CLR" stroke-width="1.8" stroke-linejoin="round"/>',
+  user:'<circle cx="10" cy="6.5" r="3.5" fill="none" stroke="CLR" stroke-width="1.8"/><path d="M3.5 17.5c1-3.5 3.5-5 6.5-5s5.5 1.5 6.5 5" fill="none" stroke="CLR" stroke-width="1.8" stroke-linecap="round"/>',
+  shield:'<path d="M10 2.5 16.5 5v5c0 4-2.7 6.6-6.5 8-3.8-1.4-6.5-4-6.5-8V5z" fill="none" stroke="CLR" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 10l2 2 4-4" fill="none" stroke="CLR" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  globe:'<circle cx="10" cy="10" r="7.5" fill="none" stroke="CLR" stroke-width="1.8"/><path d="M2.5 10h15M10 2.5c-4.5 4.5-4.5 10.5 0 15 4.5-4.5 4.5-10.5 0-15z" fill="none" stroke="CLR" stroke-width="1.6"/>',
+  bank:'<path d="M3 8l7-5 7 5" fill="none" stroke="CLR" stroke-width="1.8" stroke-linejoin="round"/><path d="M4.5 8v7M8.2 8v7M11.8 8v7M15.5 8v7M3 15h14v2.5H3z" fill="none" stroke="CLR" stroke-width="1.8" stroke-linejoin="round"/>',
+  msg:'<path d="M3 4h14v9H8l-4 3.5V4z" fill="none" stroke="CLR" stroke-width="1.8" stroke-linejoin="round"/>',
+  eye:'<path d="M2 10s3-5.5 8-5.5S18 10 18 10s-3 5.5-8 5.5S2 10 2 10z" fill="none" stroke="CLR" stroke-width="1.8" stroke-linejoin="round"/><circle cx="10" cy="10" r="2.4" fill="none" stroke="CLR" stroke-width="1.8"/>',
+  seed:'<path d="M10 17.5V9" stroke="CLR" stroke-width="1.8" stroke-linecap="round"/><path d="M10 9C10 5 7 2.8 3.5 3c0 4 2.8 6.3 6.5 6zM10 12c0-3 2.5-4.8 6.5-4.6 0 3.4-2.6 5.2-6.5 4.6z" fill="none" stroke="CLR" stroke-width="1.7" stroke-linejoin="round"/>'
+};
+function iconSVG(name,color){
+  return `<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">${(ICONS[name]||ICONS.spark).replaceAll('CLR',color||'#047857')}</svg>`;
+}
+/* hydrate [data-ava] [data-agent] [data-icon] */
+document.querySelectorAll('[data-ava]').forEach(el=>{
+  el.classList.add('ava');
+  el.innerHTML=avatarSVG(el.dataset.ava,{rx:el.dataset.rx??60,uid:Math.random().toString(36).slice(2,6)});
+});
+document.querySelectorAll('[data-agent]').forEach(el=>{el.classList.add('ava');el.innerHTML=agentSVG()});
+document.querySelectorAll('[data-icon]').forEach(el=>{
+  el.style.display='inline-block';if(!el.style.width){el.style.width='1em';el.style.height='1em'}
+  el.innerHTML=iconSVG(el.dataset.icon,el.dataset.c);
+});
+/* ============================================================
+   S1 cover cast strip
+   ============================================================ */
+(function(){
+  const keys=['dakai','xiaoai','jingjie','xiaoya','laokang','ayan','xiaolu','taozi'];
+  const wrap=document.getElementById('coverCast');
+  wrap.innerHTML=keys.map(k=>`<span class="ava">${avatarSVG(k,{rx:60,uid:'c'+k})}</span>`).join('')
+    +`<span class="cast-agent">${agentSVG()}</span>`;
+})();
+/* ============================================================
+   S3 department cards
+   ============================================================ */
+(function(){
+  const grid=document.getElementById('castGrid');
+  const order=[['dev','dakai',['xiaolin','azhe','xiaoai','laozhou'],'d2'],
+               ['prod','jingjie',['ajie','xiaoya'],'d3'],
+               ['mkt','laokang',['ayan','dapeng'],'d4'],
+               ['ad','xiaolu',['afei','taozi','akun','wenwen'],'d5']];
+  grid.innerHTML=order.map(([dep,head,mems,dl])=>{
+    const D=DEPTS[dep],H=CAST[head];
+    return `<div class="dept-card rv ${dl}">
+      <div class="dept-bar" style="background:${D.c}"></div>
+      <div class="dept-head"><span class="ava">${avatarSVG(head,{rx:34,uid:'h'+head})}</span>
+        <div><b>${D.label}</b><span>负责人 · ${H.name}</span></div></div>
+      <div class="dept-members">${mems.map(m=>`<div class="mem"><span class="ava">${avatarSVG(m,{rx:60,uid:'m'+m})}</span><span>${CAST[m].name}</span><span class="pill">${CAST[m].role}</span></div>`).join('')}</div>
+    </div>`;
+  }).join('');
+})();
+/* ============================================================
+   S5 ORG CHART — before / after layers on one stage
+   stage design coords: 1000 x 540
+   ============================================================ */
+(function(){
+  const stage=document.getElementById('orgStage');
+  const D={dev:{x:140},prod:{x:368},mkt:{x:632},ad:{x:860}};
+  const POS={boss:[500,52],
+    dakai:[140,168],xiaolin:[92,300],azhe:[188,300],xiaoai:[92,408],laozhou:[188,408],
+    jingjie:[368,168],ajie:[320,300],xiaoya:[416,300],
+    laokang:[632,168],ayan:[584,300],dapeng:[680,300],
+    xiaolu:[860,168],afei:[812,300],taozi:[908,300],akun:[812,408],wenwen:[908,408]};
+  const HUB=[500,246];
+  const pct=(x,y)=>`left:${x/10}%;top:${y/5.4}%`;
+  function nodes(uid){
+    return Object.entries(POS).map(([k,[x,y]])=>{
+      const p=CAST[k];const cls=k==='boss'?'boss':(p.role.includes('负责人')?'head':'mem');
+      return `<div class="node ${cls}" style="${pct(x,y)}"><span class="ava">${avatarSVG(k,{rx:60,uid:uid+k})}</span>
+        <span class="n-name">${p.name}</span>${cls!=='mem'?`<span class="n-role">${p.role}</span>`:''}</div>`;
+    }).join('');
+  }
+  /* tree lines (shared skeleton) */
+  const tree=Object.keys(D).map(dep=>{
+    const hx=D[dep].x;return `M500,80 C500,120 ${hx},110 ${hx},142`;
+  }).join(' ');
+  const treeSub=Object.entries(POS).filter(([k])=>CAST[k].role&&!CAST[k].role.includes('负责人')&&k!=='boss')
+    .map(([k,[x,y]])=>{const hx=D[CAST[k].dept].x;return `M${hx},196 C${hx},${y-60} ${x},${y-70} ${x},${y-26}`}).join(' ');
+  /* chaos (before) */
+  const chaos=[
+    ['M92,274 C110,230 120,210 132,196',1],['M188,274 C180,240 168,220 150,196',1],
+    ['M92,382 C70,300 100,230 130,198',1],
+    ['M584,274 C520,210 440,190 380,196',1],
+    ['M908,274 C820,180 420,140 168,180',1],
+    ['M320,274 C400,220 540,200 618,190',1]
+  ].map(([d])=>`<path d="${d}" fill="none" stroke="#e0574f" stroke-width="2" stroke-dasharray="5 7" opacity=".65" marker-end="url(#arrBad)" vector-effect="non-scaling-stroke"/>`).join('');
+  const beforeHTML=`
+    <svg class="wires" viewBox="0 0 1000 540" preserveAspectRatio="none">
+      <defs><marker id="arrBad" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#e0574f"/></marker></defs>
+      <path d="${tree}" fill="none" stroke="#d9d9d4" stroke-width="2" vector-effect="non-scaling-stroke"/>
+      <path d="${treeSub}" fill="none" stroke="#e3e3e0" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+      ${chaos}
+    </svg>
+    ${nodes('b_')}
+    <div class="chaos-chip" style="left:14%;top:44%;animation-delay:.2s">同一个问题 ×3</div>
+    <div class="chaos-chip" style="left:46%;top:36%;animation-delay:1.1s">文件在哪？</div>
+    <div class="chaos-chip" style="left:58%;top:13%;animation-delay:1.9s">等负责人回复…</div>
+    <div class="chaos-chip" style="left:80%;top:42%;animation-delay:.7s">被消息冲掉了</div>`;
+  /* after — everyone connects to the hub */
+  const spokes=Object.entries(POS).map(([k,[x,y]])=>{
+    const mx=(x+HUB[0])/2, my=(y+HUB[1])/2+(y<HUB[1]?30:-20);
+    return `<path class="spoke" d="M${x},${y+(y<HUB[1]?26:-26)} Q${mx},${my} ${HUB[0]},${HUB[1]}" fill="none" stroke="#10b981" stroke-width="1.8" stroke-dasharray="6 9" opacity=".55" vector-effect="non-scaling-stroke" style="animation:dashflow 1.15s linear infinite"/>`;
+  }).join('');
+  const dots=REDUCED?'':[['M92,326 Q296,300 500,246',0],['M908,326 Q704,310 500,246','.8s'],['M368,194 Q430,215 500,246','.4s'],['M500,78 Q500,160 500,246','1.2s']]
+    .map(([d,b])=>`<circle r="4.5" fill="#10b981"><animateMotion dur="2.6s" repeatCount="indefinite" begin="${b||0}" path="${d}"/></circle>`).join('');
+  const afterHTML=`
+    <svg class="wires" viewBox="0 0 1000 540" preserveAspectRatio="none">${spokes}${dots}</svg>
+    ${nodes('a_')}
+    <div class="hub" style="left:50%;top:${HUB[1]/5.4}%">
+      <div class="hub-core breath"><div class="hub-ring"></div>${agentSVG()}</div>
+      <span class="n-name">Agent · 公司记忆</span>
+    </div>
+    <div class="good-chip" style="left:15%;top:65%">问 Agent · 秒回</div>
+    <div class="good-chip" style="left:85%;top:65%">自动沉淀</div>
+    <div class="good-chip" style="left:50%;top:80%">跨部门直取 · 权限分明</div>`;
+  stage.innerHTML=`<div class="org-layer" id="layerBefore">${beforeHTML}</div>
+    <div class="org-layer hidden-layer" id="layerAfter">${afterHTML}</div>`;
+  /* stats + toggle */
+  const stats=document.getElementById('orgStats');
+  const S={before:[['bad-s','找一个文件 · 问了一圈人'],['bad-s','同一问题被回答 3 遍'],['bad-s','同步会一场接一场']],
+           after:[['good-s','问 Agent · 秒级响应'],['good-s','所有信息自动沉淀'],['good-s','同步会 → 一条晚报']]};
+  const bB=document.getElementById('btnBefore'),bA=document.getElementById('btnAfter');
+  let mode='before',timer=null,paused=0;
+  function render(m){
+    mode=m;
+    document.getElementById('layerBefore').classList.toggle('hidden-layer',m!=='before');
+    document.getElementById('layerAfter').classList.toggle('hidden-layer',m!=='after');
+    bB.className=m==='before'?'act-bad':'';bA.className=m==='after'?'act-good':'';
+    stats.innerHTML=S[m].map(([c,t])=>`<span class="org-stat ${c}">${t}</span>`).join('');
+  }
+  render('before');
+  bB.onclick=()=>{render('before');paused=Date.now()};
+  bA.onclick=()=>{render('after');paused=Date.now()};
+  const slide=document.getElementById('orgSlide');
+  slide._orgStart=()=>{clearInterval(timer);render('before');
+    timer=setInterval(()=>{if(Date.now()-paused>9000)render(mode==='before'?'after':'before')},5500)};
+  slide._orgStop=()=>clearInterval(timer);
+})();
+/* ============================================================
+   S10 DATA FLOW — sources → agent → memory bank → consumers
+   ============================================================ */
+(function(){
+  const stage=document.getElementById('flowStage');
+  const srcs=[['msg','群聊消息','谁说了什么',110,'#5b86d6','#e6edf9'],
+              ['file','文件资料','报价单 · PPT · 合同',218,'#9b7ed0','#efe9f9'],
+              ['mic','会议讨论','结论与待办',326,'#e0a23c','#f7efdf'],
+              ['check','进度反馈','「做完了」「已付款」',434,'#e8836b','#fbe9e3']];
+  const cons=[['eye','同事随时问','不再打扰任何人',96],
+              ['moon','负责人晚报','进度自动汇总',210],
+              ['bank','老板全局视图','四个部门尽收眼底',324],
+              ['seed','新人入职包','第一天接上共享沉淀',438]];
+  const shelves=[['研发部','#5b86d6'],['产品部','#9b7ed0'],['市场销售部','#e0a23c'],['广告营销部','#e8836b']];
+  const AG=[386,272];
+  const srcHTML=srcs.map(([ic,t,s,y,c,w],i)=>`<div class="flow-card" style="left:13.5%;top:${y/5.4}%;width:19cqw">
+      <span class="fc-ico" style="background:${w}">${iconSVG(ic,c)}</span><div><b>${t}</b><span>${s}</span></div></div>`).join('');
+  const conHTML=cons.map(([ic,t,s,y])=>`<div class="flow-card" style="left:87%;top:${y/5.4}%;width:20cqw">
+      <span class="fc-ico" style="background:var(--accent-weak)">${iconSVG(ic,'#047857')}</span><div><b>${t}</b><span>${s}</span></div></div>`).join('');
+  const bankHTML=`<div class="bank" style="left:62%;top:50.4%">
+      <div class="bank-title"><span style="width:1.9cqw;height:1.9cqw;flex:none;display:inline-block">${iconSVG('bank','#047857')}</span>公司记忆库</div>
+      ${shelves.map(([n,c])=>`<div class="shelf"><span class="sh-dot" style="background:${c}"></span><b>${n}</b>
+        <span class="sh-split"><span class="sh-in">内部</span><span class="sh-share">共享</span></span></div>`).join('')}
+      <div class="shelf" style="border-top:1px solid var(--line)"><span class="sh-dot" style="background:#10b981"></span><b>全公司</b>
+        <span class="sh-split"><span class="sh-share" style="flex:1">公告 · 制度 · 品牌资产</span></span></div></div>`;
+  const paths={
+    in:srcs.map(([,,,y])=>`M235,${y} C300,${y} 320,272 ${AG[0]-52},272`),
+    mid:[`M${AG[0]+52},272 C470,272 480,272 505,272`],
+    out:cons.map(([,,,y],i)=>`M735,${140+i*88} C790,${140+i*88} 780,${cons[i][3]} 812,${cons[i][3]}`)
+  };
+  const wire=(d,c,o)=>`<path d="${d}" fill="none" stroke="${c}" stroke-width="2" stroke-dasharray="5 8" opacity="${o||.5}" vector-effect="non-scaling-stroke" style="animation:dashflow 1.3s linear infinite"/>`;
+  const dot=(d,c,dur,b)=>`<circle r="4" fill="${c}"><animateMotion dur="${dur}" repeatCount="indefinite" begin="${b}" path="${d}"/></circle>`;
+  const svg=`<svg class="wires" viewBox="0 0 1000 540" preserveAspectRatio="none">
+    ${paths.in.map((d,i)=>wire(d,srcs[i][4])).join('')}
+    ${paths.mid.map(d=>wire(d,'#10b981',.75)).join('')}
+    ${paths.out.map(d=>wire(d,'#10b981')).join('')}
+    ${REDUCED?'':paths.in.map((d,i)=>dot(d,srcs[i][4],'2.4s',(i*.55)+'s')).join('')}
+    ${REDUCED?'':paths.out.map((d,i)=>dot(d,'#10b981','2.2s',(.5+i*.5)+'s')).join('')}
+  </svg>`;
+  stage.innerHTML=`${svg}
+    <div class="col-label" style="left:13.5%;top:6%">发生 · CAPTURE</div>
+    <div class="col-label" style="left:38.6%;top:6%">理解 · AGENT</div>
+    <div class="col-label" style="left:62%;top:6%">沉淀 · MEMORY</div>
+    <div class="col-label" style="left:87%;top:6%">用起来 · USE</div>
+    ${srcHTML}
+    <div class="hub" style="left:38.6%;top:50.4%">
+      <div class="hub-core breath"><div class="hub-ring"></div>${agentSVG()}</div>
+      <span class="n-name">识别 · 分类 · 归档</span>
+    </div>
+    ${bankHTML}${conHTML}`;
+})();
+/* ============================================================
+   SCENE ENGINE — [data-scene] containers with [data-t] steps
+   ============================================================ */
+function bindScene(sc){
+  const steps=[...sc.querySelectorAll('[data-t]')];
+  const typeLines=[...sc.querySelectorAll('[data-type-line]')];
+  const loop=+(sc.dataset.loop||0);
+  let timers=[],typeTimers=[];
+  function typewrite(el,text,start){
+    el.textContent='';el.insertAdjacentHTML('beforeend','<span class="caret"></span>');
+    const caret=el.querySelector('.caret');
+    [...text].forEach((ch,i)=>{
+      typeTimers.push(setTimeout(()=>caret.insertAdjacentText('beforebegin',ch),start+i*55));
+    });
+    typeTimers.push(setTimeout(()=>caret.remove(),start+text.length*55+600));
+  }
+  function run(){
+    stop();
+    steps.forEach(el=>el.classList.remove('on','off'));
+    sc.querySelectorAll('.todo[data-done]').forEach(t=>t.classList.remove('done'));
+    sc.querySelectorAll('.stamp').forEach(s=>s.classList.remove('on'));
+    updateProg(sc);
+    void sc.offsetWidth;
+    steps.forEach(el=>{
+      const t=+el.dataset.t;
+      timers.push(setTimeout(()=>{
+        el.classList.add('on');
+        if(el.dataset.done!==undefined){el.classList.add('done');updateProg(sc)}
+        if(el.classList.contains('stamp'))el.classList.add('on');
+        if(el.classList.contains('meet-arrow'))el.style.opacity=1;
+      },t));
+      if(el.dataset.hide)timers.push(setTimeout(()=>el.classList.add('off'),+el.dataset.hide));
+      if(el.classList.contains('meet-arrow'))timers.push(setTimeout(()=>{el.style.opacity=0},50));
+    });
+    typeLines.forEach((el,i)=>{
+      const full=el.dataset.full||el.textContent.trim();el.dataset.full=full;
+      el.textContent='';
+      typewrite(el,full,2200+i*1900);
+    });
+    /* re-enter through sc._run so wrapper scenes (e.g. the permission
+       demo override) replay their extra choreography on every loop */
+    if(loop)timers.push(setTimeout(()=>sc._run(),loop));
+  }
+  function updateProg(root){
+    const prog=root.querySelector('[data-prog]');if(!prog)return;
+    const all=root.querySelectorAll('.todo').length,done=root.querySelectorAll('.todo.done').length;
+    prog.style.width=(done/all*100)+'%';
+    const lbl=root.querySelector('[data-prog-label]');if(lbl)lbl.textContent=`${done} / ${all}`;
+  }
+  function stop(){timers.forEach(clearTimeout);typeTimers.forEach(clearTimeout);timers=[];typeTimers=[]}
+  sc._run=run;sc._stop=stop;
+}
+document.querySelectorAll('[data-scene]').forEach(bindScene);
+/* permission demo — two-round sequence (allow, then deny) */
+(function(){
+  const demo=document.getElementById('permDemo');if(!demo)return;
+  const sc=demo.closest('[data-scene]');
+  const track=document.getElementById('permTrack'),verdict=document.getElementById('permVerdict'),
+        ask=document.getElementById('permAsk'),endIco=document.getElementById('permEndIco'),
+        endLbl=document.getElementById('permEndLabel');
+  const oldRun=sc._run,baseStop=sc._stop;
+  sc._permT=[];
+  sc._stop=()=>{baseStop();sc._permT.forEach(clearTimeout);sc._permT=[]};
+  sc._run=function(){
+    sc._permT.forEach(clearTimeout);sc._permT=[];
+    oldRun();
+    const push=(fn,t)=>sc._permT.push(setTimeout(fn,t));
+    /* round 1: allowed */
+    ask.innerHTML='市场部阿妍：@Agent 要一份<b>产品介绍 PPT</b>';
+    demo.classList.remove('deny');track.classList.remove('go');
+    verdict.innerHTML='';
+    endIco.innerHTML=`<span style="width:55%;height:55%;display:inline-block">${iconSVG('doc','#10b981')}</span>`;
+    endLbl.textContent='共享区取件';
+    push(()=>track.classList.add('go'),700);
+    push(()=>verdict.innerHTML='<span class="v-ok">已发送 —— 来自 产品部 · 共享区（无需打扰任何人）</span>',2100);
+    /* round 2: denied */
+    push(()=>{ask.innerHTML='市场部阿妍：@Agent 看下<b>研发内部设计稿</b>？';
+      track.classList.remove('go');verdict.innerHTML='';
+      endIco.innerHTML=`<span style="width:55%;height:55%;display:inline-block">${iconSVG('lock','#b3423b')}</span>`;
+      endLbl.textContent='部门内 · 不可见';},6200);
+    push(()=>{track.classList.add('go');demo.classList.add('deny')},7000);
+    push(()=>verdict.innerHTML='<span class="v-no">已拦截 —— 该文件仅研发部内部可见</span>',8400);
+  };
+})();
+/* pain slide — rotate the 3 demos, synced with the pain cards */
+(function(){
+  const wrap=document.getElementById('painDemos');if(!wrap)return;
+  const chats=[...wrap.querySelectorAll('.chat')];
+  const items=[...document.querySelectorAll('#painSlide .pain-item')];
+  const slide=document.getElementById('painSlide');
+  let cur=0,timer=null,paused=0;
+  function show(i){
+    cur=i;
+    chats.forEach((c,j)=>{
+      c.classList.toggle('act',j===i);
+      if(j!==i&&c._stop)c._stop();
+    });
+    items.forEach((it,j)=>{
+      it.classList.toggle('act',j===i);
+      const h=it.querySelector('.p-hint');
+      if(h)h.textContent=j===i?'案发现场 · 正在播放 →':'点击查看这一幕 →';
+    });
+    if(chats[i]._run)chats[i]._run();
+  }
+  items.forEach((it,i)=>{it.onclick=()=>{show(i);paused=Date.now()}});
+  slide._painStart=()=>{clearInterval(timer);paused=0;show(0);
+    timer=setInterval(()=>{if(Date.now()-paused>12000)show((cur+1)%chats.length)},10000)};
+  slide._painStop=()=>{clearInterval(timer);chats.forEach(c=>c._stop&&c._stop())};
+})();
+/* counters */
+function runCounters(slide){
+  slide.querySelectorAll('[data-count]').forEach(el=>{
+    const target=+el.dataset.count,t0=performance.now(),dur=1300;
+    function tick(now){
+      const p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(target*e);
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+/* ============================================================
+   PRESENTATION CONTROLLER
+   ============================================================ */
+class Deck{
+  constructor(){
+    this.slides=[...document.querySelectorAll('.slide')];
+    this.scroller=document.getElementById('deck');
+    this.cur=0;this.animating=false;this.tsY=0;this.tsX=0;
+    this.auto=false;this.autoTimer=null;
+    this.init();
+  }
+  init(){
+    const io=new IntersectionObserver(es=>{
+      es.forEach(e=>{
+        const idx=this.slides.indexOf(e.target);
+        if(e.isIntersecting){
+          e.target.classList.add('visible');
+          if(!this.animating){this.cur=idx;this.ui()}
+          /* pain-demo chats are driven by the rotator, not auto-run */
+          e.target.querySelectorAll('[data-scene]').forEach(s=>{if(!s.closest('.pain-demos'))s._run&&s._run()});
+          if(e.target.matches('[data-scene]')&&e.target._run)e.target._run();
+          if(e.target._orgStart)e.target._orgStart();
+          if(e.target._painStart)e.target._painStart();
+          runCounters(e.target);
+        }else{
+          e.target.querySelectorAll('[data-scene]').forEach(s=>s._stop&&s._stop());
+          if(e.target.matches('[data-scene]'))e.target._stop&&e.target._stop();
+          if(e.target._orgStop)e.target._orgStop();
+          if(e.target._painStop)e.target._painStop();
+        }
+      });
+    },{threshold:.5});
+    this.slides.forEach(s=>io.observe(s));
+    document.addEventListener('keydown',e=>{
+      if(e.target.getAttribute&&e.target.getAttribute('contenteditable'))return;
+      if(e.key==='ArrowDown'||e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();this.go(this.cur+1)}
+      else if(e.key==='ArrowUp'||e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();this.go(this.cur-1)}
+      else if(e.key==='Home'){e.preventDefault();this.go(0)}
+      else if(e.key==='End'){e.preventDefault();this.go(this.slides.length-1)}
+      else if(e.key==='p'||e.key==='P'){this.toggleAuto()}
+    });
+    document.addEventListener('touchstart',e=>{this.tsY=e.touches[0].clientY;this.tsX=e.touches[0].clientX},{passive:true});
+    document.addEventListener('touchmove',e=>{if(e.touches.length===1)e.preventDefault()},{passive:false});
+    document.addEventListener('touchend',e=>{
+      const dy=this.tsY-e.changedTouches[0].clientY,dx=this.tsX-e.changedTouches[0].clientX;
+      if(Math.abs(dy)<50||Math.abs(dx)>Math.abs(dy))return;
+      this.go(this.cur+(dy>0?1:-1));
+    },{passive:true});
+    /* fully-controlled wheel: prevent native scroll, accumulate delta, one slide per gesture */
+    this._acc=0;this._cool=0;
+    document.addEventListener('wheel',e=>{
+      e.preventDefault();
+      const now=Date.now();
+      if(now-this._cool<800)return;
+      if(Math.abs(e.deltaY)<15)return; /* ignore trackpad inertia tail */
+      this._acc+=e.deltaY;
+      if(Math.abs(this._acc)>60){
+        this.go(this.cur+(this._acc>0?1:-1));
+        this._acc=0;this._cool=now;
+      }
+      clearTimeout(this._accT);this._accT=setTimeout(()=>this._acc=0,220);
+    },{passive:false});
+    window.addEventListener('resize',()=>{
+      cancelAnimationFrame(this._raf);clearTimeout(this._rafEnd);
+      this.scroller.scrollTop=this.slides[this.cur].offsetTop;
+    });
+    const dots=document.getElementById('navDots');
+    this.slides.forEach((_,i)=>{
+      const d=document.createElement('button');
+      d.className='nav-dot'+(i===0?' active':'');
+      d.setAttribute('aria-label','第 '+(i+1)+' 页');
+      d.onclick=()=>this.go(i);dots.appendChild(d);
+    });
+    this.bar=document.getElementById('progressBar');
+    this.counter=document.getElementById('slideCounter');
+    this.apBtn=document.getElementById('autoplayBtn');
+    this.apBtn.onclick=()=>this.toggleAuto();
+    if(this.slides[0])this.slides[0].classList.add('visible');
+    this.ui();
+    setTimeout(()=>document.getElementById('kbdHint').classList.add('faded'),7000);
+  }
+  go(i){
+    if(i<0||i>=this.slides.length||this.animating)return;
+    this.animating=true;this.cur=i;
+    this.smoothTo(this.slides[i].offsetTop);
+    this.ui();setTimeout(()=>this.animating=false,720);
+  }
+  /* rAF-driven scroll animation — immune to snap/smooth-behavior quirks */
+  smoothTo(top){
+    const el=this.scroller;
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches){el.scrollTop=top;return}
+    cancelAnimationFrame(this._raf);clearTimeout(this._rafEnd);
+    const from=el.scrollTop,d=top-from,t0=performance.now(),dur=680;
+    const tick=n=>{
+      const p=Math.min((n-t0)/dur,1),e=1-Math.pow(1-p,4);
+      el.scrollTop=from+d*e;
+      if(p<1)this._raf=requestAnimationFrame(tick);
+    };
+    this._raf=requestAnimationFrame(tick);
+    /* guaranteed landing even if rAF is throttled (background tab) */
+    this._rafEnd=setTimeout(()=>{cancelAnimationFrame(this._raf);el.scrollTop=top},dur+60);
+  }
+  toggleAuto(){
+    this.auto=!this.auto;
+    this.apBtn.classList.toggle('on',this.auto);
+    document.getElementById('apLabel').textContent=this.auto?'巡播中':'自动巡播';
+    clearInterval(this.autoTimer);
+    if(this.auto)this.autoTimer=setInterval(()=>{
+      this.go(this.cur+1>=this.slides.length?0:this.cur+1);
+    },16000);
+  }
+  ui(){
+    const n=this.slides.length;
+    this.bar&&(this.bar.style.width=((this.cur+1)/n*100)+'%');
+    document.querySelectorAll('.nav-dot').forEach((d,i)=>d.classList.toggle('active',i===this.cur));
+    this.counter&&(this.counter.textContent=(this.cur+1)+' / '+n);
+  }
+}
+let deck;
+document.addEventListener('DOMContentLoaded',()=>{
+  deck=new Deck();
+  window.go=i=>deck.go(i);
+});
+</script>
+</body>
+</html>

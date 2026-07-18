@@ -80,6 +80,7 @@ p,li,blockquote{overflow-wrap:break-word}
   .slide{height:auto;min-height:100vh;overflow:visible;page-break-after:always}
   .progress-bar,.nav-dots,.slide-counter,.kbd-hint,.autoplay-btn,.brand-corner{display:none!important}
   .rv,.rv-pop,.rv-l,.rv-r{opacity:1!important;transform:none!important}
+  .gen-ask{display:none!important}
   .msg{max-height:none!important;opacity:1!important;transform:none!important;margin-top:8px!important}
   .msg.typing{display:none!important}
   .task-row[data-t]{opacity:1!important;transform:none!important}
@@ -578,6 +579,41 @@ p,li,blockquote{overflow-wrap:break-word}
   opacity:0;transform:translateX(14px);transition:opacity .45s ease,transform .5s var(--ease-out-back);max-width:54%}
 .ask-a.on{opacity:1;transform:none}
 .ask-a b{color:var(--accent-ink)}
+/* ---- S12 “say one sentence” generation overlay ---- */
+.gen-ask{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:clamp(12px,2.6vh,22px);padding:var(--slide-padding);
+  transition:opacity .55s ease,transform .7s var(--ease-out-expo)}
+#dashSlide.gen-done .gen-ask{opacity:0;transform:translateY(-34px);pointer-events:none}
+.ga-eyebrow{font-family:var(--mono);font-size:clamp(.68rem,1vw,.85rem);font-weight:600;letter-spacing:.16em;
+  color:var(--accent-ink)}
+.ga-title{font-family:var(--serif);font-weight:700;font-size:clamp(1.5rem,3vw,2.5rem);letter-spacing:-.01em;
+  text-align:center;line-height:1.3}
+.ga-bar{display:flex;align-items:center;gap:12px;width:min(88vw,640px);background:var(--surface);
+  border:1.5px solid var(--line-2);border-radius:999px;padding:9px 10px 9px 18px;box-shadow:var(--shadow-lg);
+  transition:border-color .2s ease}
+.ga-bar:focus-within{border-color:var(--accent)}
+.ga-bar .ava{width:clamp(30px,3vw,38px);height:clamp(30px,3vw,38px);border-radius:50%;overflow:hidden;flex:none}
+.ga-bar input{flex:1;min-width:0;border:none;outline:none;background:none;color:var(--ink);
+  font-family:var(--sans);font-size:clamp(.92rem,1.5vw,1.15rem)}
+.ga-bar input::placeholder{color:var(--ink-4)}
+.ga-bar input:disabled{color:var(--ink-2)}
+.ga-go{width:clamp(34px,3.4vw,42px);height:clamp(34px,3.4vw,42px);border-radius:50%;background:var(--accent);
+  display:grid;place-items:center;flex:none;transition:transform .2s var(--ease-out-back)}
+.ga-go:hover{transform:scale(1.08)}
+.ga-go svg{width:45%;height:45%}
+.ga-hint{display:flex;align-items:center;gap:9px;font-size:clamp(.76rem,1.15vw,.95rem);color:var(--ink-2);
+  background:var(--surface);border:1px dashed var(--line-2);border-radius:999px;padding:7px 15px;
+  transition:all .2s ease}
+.ga-hint:hover{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-weak)}
+.ga-hint .pill{flex:none}
+.ga-status{min-height:2em;font-family:var(--mono);font-size:clamp(.7rem,1.05vw,.9rem);color:var(--accent-ink);
+  display:flex;align-items:center;gap:9px}
+.gs-dots{display:inline-flex;gap:4px;align-items:center}
+.gs-dots i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:tb 1s ease infinite}
+.gs-dots i:nth-child(2){animation-delay:.15s}.gs-dots i:nth-child(3){animation-delay:.3s}
+/* hide the report until the presenter “asks” for it */
+#dashSlide.visible .rv{opacity:0;transform:translateY(26px)}
+#dashSlide.gen-done .rv{opacity:1;transform:translateY(0)}
 /* ============================================================
    S13 — VALUE  ·  S15 — CLOSING
    ============================================================ */
@@ -953,7 +989,18 @@ p,li,blockquote{overflow-wrap:break-word}
 </section>
 
 <!-- ============ S12 · BOSS DASHBOARD ============ -->
-<section class="slide" aria-label="老板经营大屏" data-scene data-loop="14000">
+<section class="slide" aria-label="老板经营大屏" data-scene data-loop="14000" id="dashSlide">
+  <div class="gen-ask" id="genAsk">
+    <div class="ga-eyebrow">每天 21:00 · 老板只需要说一句话</div>
+    <h2 class="ga-title">想看今天的经营情况？<br>跟 Agent 说就行</h2>
+    <div class="ga-bar">
+      <span class="ava" data-ava="boss"></span>
+      <input id="genInput" type="text" placeholder="对 Agent 说点什么…" aria-label="对 Agent 说">
+      <button class="ga-go" id="genGo" aria-label="发送"><svg viewBox="0 0 20 20" fill="none"><path d="M3.5 10h12m0 0-4.5-4.5M15.5 10 11 14.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <button class="ga-hint" id="genHint">帮我生成一份今天全公司的经营报告<span class="pill">点击填入 · 回车</span></button>
+    <div class="ga-status" id="genStatus"></div>
+  </div>
   <div class="slide-content" style="justify-content:flex-start;padding-top:clamp(1rem,3vh,2.2rem)">
     <div class="stage-top">
       <div>
@@ -1482,6 +1529,43 @@ document.querySelectorAll('[data-scene]').forEach(bindScene);
     timer=setInterval(()=>{if(Date.now()-paused>12000)show((cur+1)%chats.length)},10000)};
   slide._painStop=()=>{clearInterval(timer);chats.forEach(c=>c._stop&&c._stop())};
 })();
+/* S12 — “say one sentence, get the report” live simulation.
+   Presenter types (or clicks the hint), hits Enter, the report assembles. */
+(function(){
+  const sl=document.getElementById('dashSlide');if(!sl)return;
+  const input=document.getElementById('genInput'),go=document.getElementById('genGo'),
+        hint=document.getElementById('genHint'),status=document.getElementById('genStatus');
+  const SUGGEST='帮我生成一份今天全公司的经营报告';
+  const DOTS='<span class="gs-dots"><i></i><i></i><i></i></span>';
+  let T=[];
+  function reset(){
+    T.forEach(clearTimeout);T=[];
+    sl.classList.remove('gen-done');
+    input.value='';input.disabled=false;status.innerHTML='';hint.style.opacity=1;
+  }
+  function fire(){
+    if(sl.classList.contains('gen-done')||input.disabled)return;
+    if(!input.value.trim())input.value=SUGGEST;
+    input.disabled=true;input.blur();hint.style.opacity=.25;
+    [[200,DOTS+' 收到。正在翻今天的记录…'],
+     [1150,DOTS+' 群聊 214 条 · 会议纪要 3 份 · 任务动态 27 条'],
+     [2150,DOTS+' 提炼重点，正在生成报告…']
+    ].forEach(([t,h])=>T.push(setTimeout(()=>status.innerHTML=h,t)));
+    T.push(setTimeout(()=>{
+      sl.classList.add('gen-done');
+      runCounters(sl);
+      if(sl._run)sl._run();   /* replay the in-dash ask/answer scene */
+    },2950));
+  }
+  go.onclick=fire;
+  hint.onclick=()=>{if(!input.disabled){input.value=SUGGEST;input.focus()}};
+  input.addEventListener('keydown',e=>{
+    if(e.isComposing||e.keyCode===229)return; /* ignore IME Enter */
+    if(e.key==='Enter')fire();
+    e.stopPropagation();   /* typing must not drive deck navigation */
+  });
+  sl._genReset=reset;
+})();
 /* counters — data-fmt adds thousands separators */
 function runCounters(slide){
   slide.querySelectorAll('[data-count]').forEach(el=>{
@@ -1524,12 +1608,13 @@ class Deck{
           if(e.target.matches('[data-scene]'))e.target._stop&&e.target._stop();
           if(e.target._orgStop)e.target._orgStop();
           if(e.target._painStop)e.target._painStop();
+          if(e.target._genReset)e.target._genReset();
         }
       });
     },{threshold:.5});
     this.slides.forEach(s=>io.observe(s));
     document.addEventListener('keydown',e=>{
-      if(e.target.getAttribute&&e.target.getAttribute('contenteditable'))return;
+      if(e.target.tagName==='INPUT'||(e.target.getAttribute&&e.target.getAttribute('contenteditable')))return;
       if(e.key==='ArrowDown'||e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();this.go(this.cur+1)}
       else if(e.key==='ArrowUp'||e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();this.go(this.cur-1)}
       else if(e.key==='Home'){e.preventDefault();this.go(0)}

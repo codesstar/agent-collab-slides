@@ -65,7 +65,7 @@ p,li,blockquote{overflow-wrap:break-word}
 @media (max-height:700px){:root{--slide-padding:clamp(.75rem,3vw,2rem);--content-gap:clamp(.4rem,1.5vw,1rem);
   --title-size:clamp(1.5rem,4.5vw,2.6rem);--h2-size:clamp(1.1rem,3vw,1.8rem)}}
 @media (max-height:600px){:root{--slide-padding:clamp(.5rem,2.5vw,1.5rem);--body-size:clamp(.7rem,1.2vw,.95rem)}
-  .nav-dots,.kbd-hint{display:none}}
+  .nav-dots,.kbd-hint,.brand-corner{display:none}}
 @media (max-height:500px){:root{--title-size:clamp(1rem,3.5vw,1.5rem);--h2-size:clamp(.9rem,2.5vw,1.25rem)}}
 @media (max-width:600px){.slide-counter{display:none}}
 @media (min-width:2000px){.slide-content{max-width:1700px;margin:0 auto}}
@@ -78,7 +78,7 @@ p,li,blockquote{overflow-wrap:break-word}
 @media print{html,body{overflow:visible;height:auto}
   #deck{overflow:visible;height:auto}
   .slide{height:auto;min-height:100vh;overflow:visible;page-break-after:always}
-  .progress-bar,.nav-dots,.slide-counter,.kbd-hint,.autoplay-btn{display:none!important}
+  .progress-bar,.nav-dots,.slide-counter,.kbd-hint,.autoplay-btn,.brand-corner{display:none!important}
   .rv,.rv-pop,.rv-l,.rv-r{opacity:1!important;transform:none!important}
   .msg{max-height:none!important;opacity:1!important;transform:none!important;margin-top:8px!important}
   .msg.typing{display:none!important}
@@ -122,6 +122,15 @@ p,li,blockquote{overflow-wrap:break-word}
 .autoplay-btn:hover{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-weak)}
 .autoplay-btn.on{background:var(--accent-weak);border-color:var(--accent);color:var(--accent-ink)}
 .autoplay-btn .ap-dot{width:7px;height:7px;border-radius:50%;background:var(--ink-4)}
+/* co-brand corner chip — Loci × PowerFlux, on every slide */
+.brand-corner{position:fixed;top:clamp(8px,1.4vh,14px);right:clamp(14px,2vw,26px);z-index:9997;
+  display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);
+  border-radius:11px;padding:5px 12px;box-shadow:var(--shadow-sm);pointer-events:none}
+.brand-corner svg{display:block;width:auto}
+.brand-corner .b-sea{height:19px}
+.brand-corner .b-loci{height:14px}
+.brand-corner .b-pf{height:16px}
+.brand-corner i{width:1px;height:15px;background:var(--line-2)}
 .autoplay-btn.on .ap-dot{background:var(--accent);animation:pulse 1.4s ease infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}60%{box-shadow:0 0 0 6px rgba(16,185,129,0)}}
 /* ============================================================
@@ -619,6 +628,7 @@ p,li,blockquote{overflow-wrap:break-word}
 <div class="slide-counter" id="slideCounter" aria-live="polite"></div>
 <button class="autoplay-btn" id="autoplayBtn" title="自动巡播 (P)"><span class="ap-dot"></span><span id="apLabel">自动巡播</span></button>
 <div class="kbd-hint" id="kbdHint">← → 翻页 · 图表自动演示 · P 自动巡播</div>
+<div class="brand-corner" id="brandCorner" aria-label="Loci × PowerFlux"></div>
 <div id="deck">
 
 <!-- ============ S1 · COVER ============ -->
@@ -1151,6 +1161,40 @@ const ICONS={
 function iconSVG(name,color){
   return `<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">${(ICONS[name]||ICONS.spark).replaceAll('CLR',color||'#047857')}</svg>`;
 }
+/* ============================================================
+   CO-BRAND LOGOS — Loci × PowerFlux, recreated as vectors
+   ============================================================ */
+const SEA_PIX=[
+'.....#.#.#......','....#######.....','...#########....','...###o#####....',
+'.###########....','##..########....','.....#######....','....#########...',
+'....#########...','....####.####...','...#####.####...','...####..####...',
+'...####..####...','...####.#####...','....##.#####....','....#..####.....',
+'....#.##..#.....','....#.#...#.....','....##...##.....','.....#####......'];
+function seahorseSVG(cls){
+  let r='';
+  SEA_PIX.forEach((row,y)=>{[...row].forEach((c,x)=>{
+    if(c==='#')r+=`<rect x="${x}" y="${y}" width="1.06" height="1.06" fill="#26221f"/>`;
+  })});
+  return `<svg class="${cls}" viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Loci">${r}</svg>`;
+}
+function lociWordSVG(cls){
+  return `<svg class="${cls}" viewBox="0 8 212 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs><linearGradient id="lgLoci" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#7b7bf0"/><stop offset="1" stop-color="#5fb9e8"/></linearGradient></defs>
+  <text x="0" y="62" font-family="Inter,'Noto Sans SC',sans-serif" font-weight="900" font-size="66" letter-spacing="4" fill="url(#lgLoci)">LOCI</text></svg>`;
+}
+function pfSVG(cls){
+  return `<svg class="${cls}" viewBox="0 10 424 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PowerFlux">
+  <defs><linearGradient id="pgPF" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#f4683c"/><stop offset="1" stop-color="#dd2a1c"/></linearGradient></defs>
+  <path d="M88,22 H36 Q24,22 24,34 V36 Q24,48 36,48 H66 Q90,48 90,66 V68 Q90,80 74,80 H16"
+    fill="none" stroke="url(#pgPF)" stroke-width="18" stroke-linejoin="round" stroke-linecap="butt"/>
+  <text x="112" y="76" font-family="Inter,'Noto Sans SC',sans-serif" font-weight="800" font-size="58" letter-spacing="-1" fill="#1d1d1f">PowerFlux</text></svg>`;
+}
+(function(){
+  const bc=document.getElementById('brandCorner');
+  if(bc)bc.innerHTML=seahorseSVG('b-sea')+lociWordSVG('b-loci')+'<i></i>'+pfSVG('b-pf');
+})();
 /* hydrate [data-ava] [data-agent] [data-icon] */
 document.querySelectorAll('[data-ava]').forEach(el=>{
   el.classList.add('ava');

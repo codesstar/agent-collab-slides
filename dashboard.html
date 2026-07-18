@@ -76,6 +76,12 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .tabs span{font-family:var(--mono);font-size:10.5px;padding:4px 12px;border-radius:999px;color:var(--ink-3)}
 .tabs .on{background:var(--surface);color:var(--accent-ink);font-weight:600;box-shadow:var(--shadow-sm)}
 .stamp-date{font-family:var(--mono);font-size:10.5px;color:var(--ink-3)}
+.topbar-brands{display:flex;align-items:center;gap:9px;margin-left:6px}
+.topbar-brands svg{display:block;width:auto}
+.topbar-brands .b-sea{height:18px}
+.topbar-brands .b-loci{height:13px}
+.topbar-brands .b-pf{height:15px}
+.topbar-brands i{width:1px;height:14px;background:var(--line-2)}
 .views{flex:1;overflow-y:auto;overflow-x:hidden;padding:clamp(14px,2vh,22px) clamp(16px,2.4vw,30px) 10px;
   scrollbar-width:thin}
 /* ============================================================
@@ -346,7 +352,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   .nav-item{padding:7px 11px;white-space:nowrap}
   .kpis{grid-template-columns:repeat(2,1fr)}
   .g3,.g2,.g21{grid-template-columns:1fr}
-  .tabs{display:none}
+  .tabs,.topbar-brands{display:none}
   .dept-hero .mem-strip{display:none}
   .ans{max-width:none}
 }
@@ -373,6 +379,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     <h1 id="viewTitle">公司总览</h1>
     <span class="live"><i></i>每晚 21:00 自动生成</span>
     <div class="tabs"><span class="on">今日</span><span>本周</span><span>本月</span></div>
+    <div class="topbar-brands" id="tbBrands" aria-label="Loci × PowerFlux"></div>
     <span class="stamp-date">07-17 周四 · 21:00 更新</span>
   </header>
 
@@ -875,6 +882,38 @@ const ICONS={
 function iconSVG(name,color){
   return `<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block">${(ICONS[name]||ICONS.spark).replaceAll('CLR',color||'#047857')}</svg>`;
 }
+/* co-brand logos — Loci × PowerFlux, recreated as vectors */
+const SEA_PIX=[
+'.....#.#.#......','....#######.....','...#########....','...###o#####....',
+'.###########....','##..########....','.....#######....','....#########...',
+'....#########...','....####.####...','...#####.####...','...####..####...',
+'...####..####...','...####.#####...','....##.#####....','....#..####.....',
+'....#.##..#.....','....#.#...#.....','....##...##.....','.....#####......'];
+function seahorseSVG(cls){
+  let r='';
+  SEA_PIX.forEach((row,y)=>{[...row].forEach((c,x)=>{
+    if(c==='#')r+=`<rect x="${x}" y="${y}" width="1.06" height="1.06" fill="#26221f"/>`;
+  })});
+  return `<svg class="${cls}" viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Loci">${r}</svg>`;
+}
+function lociWordSVG(cls){
+  return `<svg class="${cls}" viewBox="0 8 212 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs><linearGradient id="lgLoci" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#7b7bf0"/><stop offset="1" stop-color="#5fb9e8"/></linearGradient></defs>
+  <text x="0" y="62" font-family="Inter,'Noto Sans SC',sans-serif" font-weight="900" font-size="66" letter-spacing="4" fill="url(#lgLoci)">LOCI</text></svg>`;
+}
+function pfSVG(cls){
+  return `<svg class="${cls}" viewBox="0 10 424 82" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PowerFlux">
+  <defs><linearGradient id="pgPF" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#f4683c"/><stop offset="1" stop-color="#dd2a1c"/></linearGradient></defs>
+  <path d="M88,22 H36 Q24,22 24,34 V36 Q24,48 36,48 H66 Q90,48 90,66 V68 Q90,80 74,80 H16"
+    fill="none" stroke="url(#pgPF)" stroke-width="18" stroke-linejoin="round" stroke-linecap="butt"/>
+  <text x="112" y="76" font-family="Inter,'Noto Sans SC',sans-serif" font-weight="800" font-size="58" letter-spacing="-1" fill="#1d1d1f">PowerFlux</text></svg>`;
+}
+(function(){
+  const tb=document.getElementById('tbBrands');
+  if(tb)tb.innerHTML=seahorseSVG('b-sea')+lociWordSVG('b-loci')+'<i></i>'+pfSVG('b-pf');
+})();
 document.querySelectorAll('[data-ava]').forEach(el=>{
   el.classList.add('ava');
   el.innerHTML=avatarSVG(el.dataset.ava,{rx:el.dataset.rx??60,uid:Math.random().toString(36).slice(2,6)});

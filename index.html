@@ -559,6 +559,13 @@ p,li,blockquote{overflow-wrap:break-word}
 .dash-tabs span{font-family:var(--mono);font-size:clamp(.54rem,.78vw,.68rem);padding:3px 10px;border-radius:999px;color:var(--ink-3)}
 .dash-tabs .on-tab{background:var(--accent-weak);color:var(--accent-ink);font-weight:600}
 .dash-hd .dh-date{margin-left:auto;font-family:var(--mono);font-size:clamp(.54rem,.78vw,.7rem);color:var(--ink-3)}
+.dash-open{display:inline-flex;align-items:center;gap:6px;margin-left:12px;pointer-events:auto;
+  font-family:var(--sans);font-size:clamp(.62rem,.92vw,.82rem);font-weight:600;color:#fff;
+  background:var(--accent);border-radius:999px;padding:5px 13px;box-shadow:0 2px 8px rgba(16,185,129,.32);
+  transition:transform .2s var(--ease-out-back),background .2s ease;text-decoration:none;white-space:nowrap}
+.dash-open:hover{background:var(--accent-ink);transform:translateY(-1px)}
+.dash-open svg{width:clamp(11px,1.1vw,14px);height:clamp(11px,1.1vw,14px)}
+.dash-open .pulse-dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse 1.5s ease infinite}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
 .kpi{background:var(--surface);padding:clamp(8px,1.5vh,14px) clamp(12px,1.6vw,20px)}
 .kpi .k-lbl{font-family:var(--mono);font-size:clamp(.52rem,.76vw,.66rem);letter-spacing:.08em;color:var(--ink-3);display:block}
@@ -1104,6 +1111,10 @@ p,li,blockquote{overflow-wrap:break-word}
         <span class="live-dot"></span><b>全公司 · 经营大屏</b>
         <div class="dash-tabs"><span class="on-tab">今日</span><span>本周</span><span>本月</span></div>
         <span class="dh-date">07-17 周四 · 21:00 更新</span>
+        <a class="dash-open" href="https://codesstar.github.io/agent-collab-slides/dashboard.html" target="_blank" rel="noopener" title="打开完整可交互版">
+          <span class="pulse-dot"></span>进入完整版 · 公司大脑
+          <svg viewBox="0 0 20 20" fill="none"><path d="M6 14 14 6M8 6h6v6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
       </div>
       <div class="kpi-row">
         <div class="kpi"><span class="k-lbl">本周收入</span><b>¥<i data-count="86000" data-fmt="1">0</i></b><span class="k-delta up">▲ 32% · 环比上周</span></div>

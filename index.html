@@ -128,8 +128,7 @@ p,li,blockquote{overflow-wrap:break-word}
   display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);
   border-radius:11px;padding:5px 12px;box-shadow:var(--shadow-sm);pointer-events:none}
 .brand-corner svg{display:block;width:auto}
-.brand-corner .b-sea{height:19px}
-.brand-corner .b-loci{height:14px}
+.brand-corner .b-loci{height:15px}
 .brand-corner .b-pf{height:16px}
 .brand-corner i{width:1px;height:15px;background:var(--line-2)}
 .autoplay-btn.on .ap-dot{background:var(--accent);animation:pulse 1.4s ease infinite}
@@ -1211,19 +1210,6 @@ function iconSVG(name,color){
 /* ============================================================
    CO-BRAND LOGOS — Loci × PowerFlux, recreated as vectors
    ============================================================ */
-const SEA_PIX=[
-'.....#.#.#......','....#######.....','...#########....','...###o#####....',
-'.###########....','##..########....','.....#######....','....#########...',
-'....#########...','....####.####...','...#####.####...','...####..####...',
-'...####..####...','...####.#####...','....##.#####....','....#..####.....',
-'....#.##..#.....','....#.#...#.....','....##...##.....','.....#####......'];
-function seahorseSVG(cls){
-  let r='';
-  SEA_PIX.forEach((row,y)=>{[...row].forEach((c,x)=>{
-    if(c==='#')r+=`<rect x="${x}" y="${y}" width="1.06" height="1.06" fill="#26221f"/>`;
-  })});
-  return `<svg class="${cls}" viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Loci">${r}</svg>`;
-}
 function lociWordSVG(cls){
   return `<svg class="${cls}" viewBox="0 8 212 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <defs><linearGradient id="lgLoci" x1="0" y1="0" x2="1" y2="0">
@@ -1240,7 +1226,7 @@ function pfSVG(cls){
 }
 (function(){
   const bc=document.getElementById('brandCorner');
-  if(bc)bc.innerHTML=seahorseSVG('b-sea')+lociWordSVG('b-loci')+'<i></i>'+pfSVG('b-pf');
+  if(bc)bc.innerHTML=lociWordSVG('b-loci')+'<i></i>'+pfSVG('b-pf');
 })();
 /* hydrate [data-ava] [data-agent] [data-icon] */
 document.querySelectorAll('[data-ava]').forEach(el=>{
